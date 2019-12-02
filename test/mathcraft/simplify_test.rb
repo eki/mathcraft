@@ -210,11 +210,14 @@ class SimplifyTest < Minitest::Test
 
     assert_simplified '5x', '2x + x3'
     assert_simplified '5x', '3x + 2x'
+
+    assert_simplified '2x^y', 'x^y + x^y'
   end
 
   test 'anything times itself is squared' do
     assert_simplified 'x^2', 'x * x'
     assert_simplified 'x^2 + 6x + 9', '(x + 3) * (x + 3)'
+    assert_simplified 'x^(2y)', 'x^y * x^y'
   end
 
   test 'add like exponents' do
@@ -226,6 +229,11 @@ class SimplifyTest < Minitest::Test
   test 'simplify relies on sorting and grouping of like terms' do
     assert_simplified '5x + 4y', 'y + x + y + 3 * x + y + x + y'
     assert_simplified '2x^6 * y^2', '(2 * x^3) * y * x * y * x^2'
+  end
+
+  test 'raising term to non-rational exponent' do
+    assert_simplified 'x^y', 'x^y'
+    assert_simplified 'x^y4^y', '(4x)^y'
   end
 
 end

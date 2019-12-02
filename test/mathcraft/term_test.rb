@@ -187,6 +187,12 @@ class TermTest < Minitest::Test
     refute Term.new(-3, {}).zero?
   end
 
+  test 'one?' do
+    assert Term.new(1, {}).one?
+    refute Term.zero.one?
+    refute Term.new(-3, {}).one?
+  end
+
   test 'degree' do
     assert_equal 0, Term.one.degree
     assert_equal 1, Term.new(1, craft('x') => 1).degree
