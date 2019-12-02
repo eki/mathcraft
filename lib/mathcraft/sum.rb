@@ -54,7 +54,7 @@ module Mathcraft
       return undefined if other.undefined?
 
       if other.term?
-        other.reciprical * self
+        other.reciprocal * self
       else
         Ratio.new(self, other)
       end

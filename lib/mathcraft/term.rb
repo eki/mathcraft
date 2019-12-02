@@ -85,7 +85,7 @@ module Mathcraft
 
       return Ratio.new(self, other) unless other.term?
 
-      negative_exponents_to_ratio(self * other.reciprical)
+      negative_exponents_to_ratio(self * other.reciprocal)
     end
 
     def **(other)
@@ -195,7 +195,7 @@ module Mathcraft
     end
 
     # Not the right term?
-    def reciprical
+    def reciprocal
       coeff = Rational(coefficient.denominator, coefficient.numerator)
       vars = variables.map { |k, v| [k, -v] }.to_h
       Term.new(coeff, vars)
@@ -220,7 +220,7 @@ module Mathcraft
 
       top = Term.new(term.coefficient,
         (term.variables.to_a - neg_vars.to_a).to_h)
-      bottom = Term.new(1, neg_vars).reciprical
+      bottom = Term.new(1, neg_vars).reciprocal
       Ratio.new(top, bottom)
     end
   end

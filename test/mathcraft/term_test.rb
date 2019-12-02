@@ -215,12 +215,12 @@ class TermTest < Minitest::Test
       like?(Term.new(7, craft('x') => 5, craft('y') => 7))
   end
 
-  test 'reciprical' do
+  test 'reciprocal' do
     assert_equal Term.new(Rational(1, 4), craft('x') => -2),
-      Term.new(4, craft('x') => 2).reciprical
+      Term.new(4, craft('x') => 2).reciprocal
 
     term = Term.new(Rational(5, 2), craft('x') => 1, craft('y') => 100)
-    assert_equal Term.one, term * term.reciprical
+    assert_equal Term.one, term * term.reciprocal
   end
 
   test 'type' do
