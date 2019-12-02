@@ -17,3 +17,15 @@ require 'minitest/autorun'
 
 class Minitest::Test
 end
+
+# Move this to Minitest::Boost. We want to limit backtraces to just the last 30
+# lines becasue
+class Mathcraft::BacktraceFilter
+  def self.filter(bt)
+    path = File.expand_path('.')
+    bt.select { |line| line.start_with?(path) }.
+      map { |line| line.sub(%r{\A#{path}/}, '') }.first(30)
+  end
+end
+
+Minitest.backtrace_filter = Mathcraft::BacktraceFilter
