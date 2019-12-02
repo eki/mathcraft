@@ -25,6 +25,7 @@ module Mathcraft
       other = craft(other).to_immediate
 
       case other
+      when Undefined then undefined
       when Term then Sum.new(*terms.values, other)
       when Sum then Sum.new(*terms.values, *other.terms.values)
       else
@@ -40,6 +41,8 @@ module Mathcraft
       other = craft(other).to_immediate
       other = Sum.new(other) if other.term?
 
+      return undefined if other.undefined?
+
       new_terms = terms.values.product(other.terms.values).map { |a, b| a * b }
       Sum.new(*new_terms)
     end
@@ -48,6 +51,7 @@ module Mathcraft
       other = craft(other)
 
       return Term.one if other == self
+      return undefined if other.undefined?
 
       if other.term?
         other.reciprical * self
@@ -59,6 +63,7 @@ module Mathcraft
     def **(other)
       other = craft(other)
 
+      return undefined if other.undefined?
       return Term.one if other == Term.zero
       return self if other == Term.one
       return Term.zero if self == Term.zero

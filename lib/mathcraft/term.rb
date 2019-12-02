@@ -78,6 +78,7 @@ module Mathcraft
       other = craft(other)
 
       return undefined if other == Term.zero
+      return undefined if other.undefined?
       return Term.one if self == other
       return Term.zero if self == Term.zero
       return self if other == Term.one
@@ -91,6 +92,7 @@ module Mathcraft
       other = craft(other)
 
       return Term.one if other == Term.zero
+      return undefined if other.undefined?
       return undefined if self == Term.zero && other.term? && other.negative?
       return Term.zero if self == Term.zero
       return Term.one if self == Term.one

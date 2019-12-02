@@ -55,27 +55,36 @@ class SimplifyTest < Minitest::Test
     assert_simplified undefined, 'x / 0'
   end
 
-  # TODO Add UndefinedTest for this? Does it involve simplification?
   test 'undefined is contagious' do
-    skip('fails, please fix me')
+    assert_simplified undefined, '(0/0) + 4'
+    assert_simplified undefined, '(0/0) - 0'
+    assert_simplified undefined, '(0/0) * 2'
+    assert_simplified undefined, '(0/0) / 10'
+    assert_simplified undefined, '(0/0)^9'
 
-    assert_simplified undefined, undefined + 4
-    assert_simplified undefined, undefined - 0
-    assert_simplified undefined, undefined * 2
-    assert_simplified undefined, undefined / 10
-    assert_simplified undefined, undefined**9
+    assert_simplified undefined, '4 + (0/0)'
+    assert_simplified undefined, '0 - (0/0)'
+    assert_simplified undefined, '2 * (0/0)'
+    assert_simplified undefined, '10 / (0/0)'
+    assert_simplified undefined, '9^(0/0)'
 
-    assert_simplified undefined, 4 + undefined
-    assert_simplified undefined, 0 - undefined
-    assert_simplified undefined, 2 * undefined
-    assert_simplified undefined, 10 / undefined
-    assert_simplified undefined, 9**undefined
+    assert_simplified undefined, '(0/0) + (0/0)'
+    assert_simplified undefined, '(0/0) - (0/0)'
+    assert_simplified undefined, '(0/0) * (0/0)'
+    assert_simplified undefined, '(0/0) / (0/0)'
+    assert_simplified undefined, '(0/0)^(0/0)'
 
-    assert_simplified undefined, undefined + undefined
-    assert_simplified undefined, undefined - undefined
-    assert_simplified undefined, undefined * undefined
-    assert_simplified undefined, undefined / undefined
-    assert_simplified undefined, undefined**undefined
+    assert_simplified undefined, '(3 + x) + (0/0)'
+    assert_simplified undefined, '(3 + x) - (0/0)'
+    assert_simplified undefined, '(3 + x) * (0/0)'
+    assert_simplified undefined, '(3 + x) / (0/0)'
+    assert_simplified undefined, '(3 + x)^(0/0)'
+
+    assert_simplified undefined, '(3 / x) + (0/0)'
+    assert_simplified undefined, '(3 / x) - (0/0)'
+    assert_simplified undefined, '(3 / x) * (0/0)'
+    assert_simplified undefined, '(3 / x) / (0/0)'
+    assert_simplified undefined, '(3 / x)^(0/0)'
   end
 
   test 'anything to zero is zero' do

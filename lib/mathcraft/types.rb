@@ -6,7 +6,7 @@ module Mathcraft
       self.class.name.split('::').last.downcase
     end
 
-    %w(number variable expression term sum ratio).each do |t|
+    %w(number variable expression term sum ratio undefined).each do |t|
       define_method(:"#{t}?") { type == t }
     end
 

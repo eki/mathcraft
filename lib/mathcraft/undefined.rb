@@ -26,9 +26,11 @@ module Mathcraft
       undefined
     end
 
-    def ^(other)
+    def **(other)
       undefined
     end
+
+    alias ^ **
 
     def value
       type
@@ -44,6 +46,22 @@ module Mathcraft
 
     def to_lazy
       undefined
+    end
+
+    def to_immediate
+      undefined
+    end
+
+    def positive?
+      false
+    end
+
+    def negative?
+      false
+    end
+
+    def zero?
+      false
     end
 
     UNDEFINED = new

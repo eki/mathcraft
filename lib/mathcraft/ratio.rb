@@ -32,6 +32,8 @@ module Mathcraft
     def +(other)
       other = craft(other).to_immediate
 
+      return undefined if other.undefined?
+
       if other.ratio? && other.denominator == denominator
         return Ratio.new(numerator + other.numerator, denominator)
       end
@@ -41,10 +43,13 @@ module Mathcraft
     end
 
     def -(other)
+      self + -other
     end
 
     def *(other)
       other = craft(other).to_immediate
+
+      return undefined if other.undefined?
 
       if other == denominator
         numerator
@@ -57,6 +62,7 @@ module Mathcraft
     def /(other)
       other = craft(other).to_immediate
 
+      return undefined if other.undefined?
       return Term.one if other == self
       return self if other == Term.one
 
@@ -64,6 +70,9 @@ module Mathcraft
     end
 
     def **(other)
+      return undefined if other.undefined?
+
+      nil
     end
 
     alias ^ **
