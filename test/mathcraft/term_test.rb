@@ -410,8 +410,6 @@ class TermTest < Minitest::Test
   end
 
   test '** resulting in negative exponent creates ratio' do
-    skip('current result is mathematically correct, but not desired?')
-
     a = Term.new(3, craft('z') => 2)
     b = Term.new(-1, {})
 

@@ -221,6 +221,15 @@ module Mathcraft
       top = Term.new(term.coefficient,
         (term.variables.to_a - neg_vars.to_a).to_h)
       bottom = Term.new(1, neg_vars).reciprocal
+
+      # If the top is something like 1/3 (coefficient 1/3, no unknowns),
+      # we'll preemptively simplify, so we don't have a "fraction" on the top
+      # of our ratio.
+      if top.rational? && (r = top.to_r) && r != 1 && r.numerator == 1
+        bottom *= Term.new(r.denominator, {})
+        top = Term.one
+      end
+
       Ratio.new(top, bottom)
     end
   end
