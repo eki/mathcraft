@@ -320,12 +320,104 @@ class TermTest < Minitest::Test
     assert_equal term.object_id, (Term.one * term).object_id
   end
 
+  test '/ by zero' do
+    assert_equal undefined, Term.new(3, {}) / Term.zero
+  end
+
+  test '/ by undefined' do
+    assert_equal undefined, Term.new(3, {}) / undefined
+  end
+
+  test '/ by one' do
+    term = Term.new(3, craft('z') => 4)
+
+    assert_equal term.object_id, (term / Term.one).object_id
+  end
+
+  test '/ by self' do
+    term = Term.new(3, craft('z') => 4)
+
+    assert_equal Term.one, term / term
+  end
+
+  test '0 / by anything' do
+    term = Term.new(3, craft('z') => 4)
+
+    assert_equal Term.zero, Term.zero / term
+  end
+
+  test '/ non-term is ratio' do
+    term = Term.new(3, craft('z') => 4)
+    sum = Sum.new(term, Term.one)
+    ratio = term / sum
+
+    assert_equal Ratio, ratio.class
+    assert_equal term, ratio.numerator
+    assert_equal sum, ratio.denominator
+  end
+
   test '/' do
-    skip('Need to implement /')
+    a = Term.new(8, craft('x') => 2, craft('y') => 4)
+    b = Term.new(2, craft('x') => 1, craft('y') => 4)
+
+    assert_equal Term.new(4, craft('x') => 1), a / b
+  end
+
+  test '/ that creates negative exponents becomes ratio' do
+    a = Term.new(8, craft('x') => 2, craft('y') => 4)
+    b = Term.new(2, craft('x') => 3, craft('y') => 4)
+
+    ratio = Ratio.new(Term.new(4, {}), Term.new(1, craft('x') => 1))
+
+    assert_equal ratio, a / b
+  end
+
+  test '** by 0' do
+    term = Term.new(3, craft('z') => 4)
+
+    assert_equal Term.one, term**0
+  end
+
+  test '** by undefined' do
+    term = Term.new(3, craft('z') => 4)
+
+    assert_equal undefined, term**undefined
+  end
+
+  test '0 ** by negative' do
+    term = Term.new(-3, {})
+
+    assert_equal undefined, Term.zero**term
+  end
+
+  test '0 ** by non-negative' do
+    term = Term.new(3, craft('z') => 4)
+
+    assert_equal Term.zero, Term.zero**term
+  end
+
+  test '0 ** by anything' do
+    term = Term.new(3, craft('z') => 4)
+
+    assert_equal Term.one, Term.one**term
   end
 
   test '**' do
-    skip('Need to implement **')
+    a = Term.new(3, craft('z') => 4)
+    b = Term.new(2, {})
+
+    assert_equal Term.new(9, craft('z') => 8), a**b
+  end
+
+  test '** resulting in negative exponent creates ratio' do
+    skip('current result is mathematically correct, but not desired?')
+
+    a = Term.new(3, craft('z') => 2)
+    b = Term.new(-1, {})
+
+    ratio = Ratio.new(Term.one, a)
+
+    assert_equal ratio, a**b
   end
 
   test 'abs' do
