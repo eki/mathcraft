@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+
+require 'mathcraft'
+require 'readline'
+
+def mathcraft_dir
+  dir = File.join(ENV['HOME'], '.mathcraft')
+  Dir.mkdir(dir) unless Dir.exists?(dir)
+  dir
+end
+
+def save_history
+  history = File.join(mathcraft_dir, 'history')
+  File.open(history, 'w') do |f|
+    Readline::HISTORY.to_a.last(100).each do |line|
+      f.puts line
+    end
+  end
+end
+
+def load_history
+  history = File.join(mathcraft_dir, 'history')
+  if File.exists?(history)
+    File.read(history).each_line do |line|
+      Readline::HISTORY << line.strip
+    end
+  end
+end
+
+load_history
+
+while buf = Readline.readline('mathcraft> ', true)
+  begin
+    puts Mathcraft.craft(buf).to_immediate.to_lazy.to_s
+  rescue => e
+    puts e
+  end
+end
+
+save_history
+
+puts
