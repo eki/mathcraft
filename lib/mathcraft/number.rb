@@ -28,20 +28,12 @@ module Mathcraft
       Rational(value, 1)
     end
 
-    def term?
-      true
-    end
-
-    def to_term
-      Term.new(value, {})
-    end
-
     def to_numeric
       value
     end
 
     def to_immediate
-      to_term
+      Term.new(value, {})
     end
 
     def to_lazy

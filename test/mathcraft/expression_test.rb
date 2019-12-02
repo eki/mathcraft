@@ -156,20 +156,6 @@ class ExpressionTest < Minitest::Test
     assert_equal Rational(3, 4), craft('(5 - 2) / (1+1)^2').to_r
   end
 
-  test 'term?' do
-    skip('is this right?')
-
-    assert craft('3 * 4').term?
-    assert craft('x^2').term?
-    assert craft('x * y').term?
-    assert craft('3 * x^2').term?
-    assert craft('3 * x * 4').term?
-
-    refute craft('3 + 4').term?
-    refute craft('3 - x').term?
-    refute craft('1 / x').term?
-  end
-
   test 'to_immediate (terms)' do
     assert_equal Term.new(12, {}), craft('3 * 4').to_immediate
     assert_equal Term.new(3, craft('x') => 1), craft('3 * x').to_immediate
@@ -188,24 +174,6 @@ class ExpressionTest < Minitest::Test
 
     assert_equal Term.new(Rational(1, 2), craft('x') => 1),
       craft('(1/2)x').to_immediate
-  end
-
-  test 'sum?' do
-    skip('is this right?')
-
-    assert craft('1 + 2').sum?
-    assert craft('x + 2').sum?
-    assert craft('y + 3 + x + 2').sum?
-
-    assert craft('1 * 2').sum?
-    assert craft('x * 2').sum?
-    assert craft('y * 3 * x * 2').sum?
-
-    assert craft('x**2').sum?
-
-    # TODO We can't currently see a sum times a term as a sum,
-    # but we should.
-    # assert craft('(1 + 2)x**2 + y**3 + 4').sum?
   end
 
   test 'to_immediate (sums)' do

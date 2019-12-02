@@ -68,13 +68,8 @@ class VariableTest < Minitest::Test
     refute Variable.new('p').expression?
   end
 
-  test 'term?' do
-    skip('is this right?')
-
-    assert Variable.new('x').term?
-  end
-
-  test 'to_term' do
-    assert_equal Term.new(1, Variable.new('x') => 1), Variable.new('x').to_term
+  test 'to_immediate' do
+    assert_equal Term.new(1, Variable.new('x') => 1),
+      Variable.new('x').to_immediate
   end
 end

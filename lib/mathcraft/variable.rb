@@ -8,16 +8,8 @@ module Mathcraft
       @value = value.to_s
     end
 
-    def term?
-      true
-    end
-
-    def to_term
-      Term.new(1, self => 1)
-    end
-
     def to_immediate
-      to_term
+      Term.new(1, self => 1)
     end
 
     def to_lazy

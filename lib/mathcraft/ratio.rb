@@ -103,20 +103,12 @@ module Mathcraft
       denominator == other.denominator
     end
 
-    def term?
-      denominator == Term.one && numerator.term?
-    end
-
     def to_term
-      numerator.to_term if term?
-    end
-
-    def sum?
-      denominator == Term.one && numerator.sum?
+      numerator.to_term if denominator == Term.one && numerator.term?
     end
 
     def to_sum
-      numerator.to_sum if sum?
+      numerator.to_sum if denominator == Term.one && numerator.sum?
     end
   end
 end

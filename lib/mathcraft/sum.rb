@@ -126,16 +126,8 @@ module Mathcraft
       terms.empty?
     end
 
-    def term?
-      terms.length == 1
-    end
-
     def to_term
-      terms.values.first
-    end
-
-    def sum?
-      true
+      terms.values.first if terms.length == 1
     end
 
     def to_sum

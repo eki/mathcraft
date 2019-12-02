@@ -110,7 +110,7 @@ module Mathcraft
     alias ^ **
 
     def coerce(other)
-      [self, craft(other).to_term]
+      [self, craft(other).to_immediate]
     end
 
     def inspect
@@ -129,6 +129,7 @@ module Mathcraft
       ary << craft(coefficient) unless coefficient == 1
 
       variables.each do |var, exp|
+        # TODO Use Term.one here instead of 1?
         ary << (exp == 1 ? var : var.to_lazy**exp.to_lazy)
       end
 
@@ -144,7 +145,7 @@ module Mathcraft
     end
 
     def <=>(other)
-      other = craft(other)
+      other = craft(other).to_immediate
 
       return nil unless other.term?
 
@@ -157,10 +158,6 @@ module Mathcraft
 
     def hash
       [coefficient, variables].hash
-    end
-
-    def term?
-      true
     end
 
     def to_term
