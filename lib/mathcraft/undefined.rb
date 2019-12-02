@@ -32,6 +32,10 @@ module Mathcraft
 
     alias ^ **
 
+    def coerce(other)
+      [self, other]
+    end
+
     def value
       type
     end
