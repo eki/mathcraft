@@ -239,6 +239,14 @@ class TermTest < Minitest::Test
     refute Term.one.expression?
   end
 
+  test 'lazy?' do
+    refute Term.one.lazy?
+  end
+
+  test 'immediate?' do
+    assert Term.one.immediate?
+  end
+
   test '-@' do
     assert_equal Term.new(-3, {}), -Term.new(3, {})
     assert_equal Term.new(4, {}), -Term.new(-4, {})

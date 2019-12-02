@@ -118,6 +118,26 @@ class ExpressionTest < Minitest::Test
     assert_equal '(+ (* x y) 10)', (x * y + 10).inspect
   end
 
+  test 'number?' do
+    refute craft('3r').number?
+  end
+
+  test 'variable?' do
+    refute craft('xy').variable?
+  end
+
+  test 'expression?' do
+    assert craft('x / x').expression?
+  end
+
+  test 'lazy?' do
+    assert craft('x + 3').lazy?
+  end
+
+  test 'immediate?' do
+    refute craft('2x').immediate?
+  end
+
   test 'rational?' do
     x = craft('x')
 

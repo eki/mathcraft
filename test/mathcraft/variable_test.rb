@@ -68,6 +68,14 @@ class VariableTest < Minitest::Test
     refute Variable.new('p').expression?
   end
 
+  test 'lazy?' do
+    assert Variable.new('x').lazy?
+  end
+
+  test 'immediate?' do
+    refute Variable.new('x').immediate?
+  end
+
   test 'to_immediate' do
     assert_equal Term.new(1, Variable.new('x') => 1),
       Variable.new('x').to_immediate

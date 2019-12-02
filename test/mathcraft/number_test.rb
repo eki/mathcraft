@@ -70,6 +70,14 @@ class NumberTest < Minitest::Test
     refute Number.new(72).expression?
   end
 
+  test 'lazy?' do
+    assert Number.new(3).lazy?
+  end
+
+  test 'immediate?' do
+    refute Number.new(0).immediate?
+  end
+
   test 'positive?' do
     refute Number.new(-1).positive?
     refute Number.new(0).positive?
