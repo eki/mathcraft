@@ -7,10 +7,18 @@ module Mathcraft
     # Canonical form could use a hash of { variables => term }, then when
     # adding a new polynomial we can quickly recognize and combine like terms.
     def initialize(*terms)
+      terms = terms.map { |t| craft(t).to_immediate }
+
+      unless terms.all?(&:term?)
+        raise "Cannot create sum from non-terms #{terms.inspect}"
+      end
+
       @terms = terms.each_with_object(Hash.new(Term.zero)) do |term, h|
         h[term.variables] += term
       end
       @terms.reject! { |k, v| v.zero? }
+
+      @terms = { {} => Term.zero } if @terms.empty?
     end
 
     def -@
@@ -23,6 +31,9 @@ module Mathcraft
 
     def +(other)
       other = craft(other).to_immediate
+
+      return self if other == Term.zero
+      return other if self == Term.zero
 
       case other
       when Undefined then undefined
@@ -42,6 +53,9 @@ module Mathcraft
       other = Sum.new(other) if other.term?
 
       return undefined if other.undefined?
+      return Term.zero if other == Term.zero || self == Term.zero
+      return self if other == Term.one
+      return other if self == Term.one
 
       new_terms = terms.values.product(other.terms.values).map { |a, b| a * b }
       Sum.new(*new_terms)
@@ -52,10 +66,17 @@ module Mathcraft
 
       return Term.one if other == self
       return undefined if other.undefined?
+      return undefined if other.zero?
+      return self if other.one?
+      return Term.zero if self == Term.zero
 
-      if other.term?
-        other.reciprocal * self
+      if other.rational?
+        Term.new(other.to_r, {}).reciprocal * self
       else
+        # TODO This is lazy. For multiplication we distribute. We could
+        # distribute here, too, but then we'd likely need to produce a sum of
+        # ratios. Since sum currently doesn't support ratios (bad!) this is a
+        # problem.
         Ratio.new(self, other)
       end
     end
@@ -63,6 +84,11 @@ module Mathcraft
     def **(other)
       other = craft(other)
 
+      # TODO Is using rational here correct? We want to catch negative
+      # integers, for sure, but does the behavior hold for negative fractions?
+      if self == Term.zero && other.rational? && other.to_r.negative?
+        return undefined
+      end
       return undefined if other.undefined?
       return Term.one if other == Term.zero
       return self if other == Term.one
@@ -114,21 +140,42 @@ module Mathcraft
     end
 
     def <=>(other)
-      other = craft(other)
+      other = craft(other).to_immediate
 
-      if other.to_immediate.sum?
-        terms <=> other.to_sum.terms
-      elsif other.term?
-        terms <=> Sum.new(other.to_term).terms
-      end
+      other = Sum.new(other) unless other.sum?
+
+      terms.values.sort <=> other.terms.values.sort
     end
 
     def ==(other)
-      other.kind_of?(Sum) && terms == other.terms
+      (other.kind_of?(Sum) && terms == other.terms) ||
+      (rational? && other.rational? && to_r == other.to_r)
+    end
+
+    def eql?(other)
+      self == other
+    end
+
+    def hash
+      terms.hash
     end
 
     def zero?
-      terms.empty?
+      rational? && to_r == 0
+    end
+
+    def one?
+      rational? && to_r == 1
+    end
+
+    def rational?
+      # Realistically this is only true with a single value, since multiple
+      # rational values should be combined as we go.
+      terms.values.all?(&:rational?)
+    end
+
+    def to_r
+      terms.values.map(&:to_r).inject('+')
     end
 
     def to_term
