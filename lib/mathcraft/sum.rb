@@ -111,7 +111,7 @@ module Mathcraft
     alias ^ **
 
     def coerce(other)
-      [self, craft(other).to_term]
+      [self, craft(other).to_immediate]
     end
 
     def inspect

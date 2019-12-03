@@ -190,6 +190,10 @@ class SumTest < Minitest::Test
     refute Sum.new(0).one?
   end
 
+  test 'coerce' do
+    assert_equal Sum.new('x', 3), 3 + Sum.new('x')
+  end
+
   test '-@' do
     assert_equal Sum.new, -Sum.new
     assert_equal Sum.new(0), -Sum.new(0)
