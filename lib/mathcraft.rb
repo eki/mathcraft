@@ -19,6 +19,8 @@ require 'mathcraft/term'   # multiplication
 require 'mathcraft/sum'    # addition
 require 'mathcraft/ratio'  # division
 
+require 'mathcraft/equation'  # Both lazy and immediate
+
 require 'mathcraft/parser'
 
 module Mathcraft

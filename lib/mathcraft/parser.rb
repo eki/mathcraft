@@ -9,7 +9,20 @@ module Mathcraft
     end
 
     def parse
-      parse_expression
+      left = parse_expression
+      skip_whitespace
+
+      if scan(/=/)
+        skip_whitespace
+
+        right = parse_expression
+
+        error 'Expected right side of equation' unless right
+
+        left = Equation.new(left, right)
+      end
+
+      left
     end
 
     def parse_expression(precedence=0)
@@ -36,7 +49,7 @@ module Mathcraft
     end
 
     def remaining_expression?
-      scanner.remaining? && !scanner.check(/\s*(\)|\z)/)
+      scanner.remaining? && !scanner.check(/\s*(\)|=|\z)/)
     end
 
     def assoc(operator)
