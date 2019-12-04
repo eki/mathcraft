@@ -149,9 +149,11 @@ module Mathcraft
     def <=>(other)
       other = craft(other).to_immediate
 
-      return nil unless other.term?
-
-      sort_key <=> other.to_term.sort_key
+      if other.term?
+        sort_key <=> other.to_term.sort_key
+      elsif other.ratio?
+        Ratio.new(self, Term.one) <=> other
+      end
     end
 
     def eql?(other)
@@ -188,6 +190,10 @@ module Mathcraft
 
     def like?(other)
       other.term? && variables == other.to_term.variables
+    end
+
+    def likeness
+      variables
     end
 
     def abs

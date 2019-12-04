@@ -13,9 +13,15 @@ class SumTest < Minitest::Test
     term_3x = craft('3x').to_immediate
     term_4x = craft('4x').to_immediate
     term_2y = craft('2y').to_immediate
+    ratio_1_x = craft('1 / x').to_immediate
+    ratio_2_x = craft('2 / x').to_immediate
+    ratio_3_x = craft('3 / x').to_immediate
+    ratio_x_y = craft('x / y').to_immediate
+    ratio_1_y = craft('1 / y').to_immediate
 
-    assert_equal({ term_x.variables => term_4x, term_2y.variables => term_2y },
-      Sum.new(term_x, term_2y, term_3x).terms)
+    assert_equal({ term_x.variables => term_4x, term_2y.variables => term_2y,
+      ratio_1_x => ratio_3_x, ratio_1_y => ratio_x_y },
+      Sum.new(term_x, term_2y, term_3x, ratio_1_x, ratio_2_x, ratio_x_y).terms)
   end
 
   test 'to_s' do
@@ -28,13 +34,17 @@ class SumTest < Minitest::Test
     assert_equal '-x + 3', Sum.new('-x', 3).to_s
     assert_equal '-x - 3', Sum.new('-x', -3).to_s
 
-    # TODO How to have sums of ratios?
-    # assert_equal 'x / y - 3', Sum.new('x/y', -3).to_s
+    assert_equal 'x / y - 3', Sum.new('x/y', -3).to_s
+    # Should this distribute instead?
+    assert_equal '(2x + z) / y', Sum.new('z/y', '2x/y').to_s
   end
 
   test 'inspect' do
     assert_equal '(sum {{}=>(term 0/1 {})})', Sum.new.inspect
     assert_equal '(sum {{}=>(term 3/1 {})})', Sum.new(3).inspect
+    assert_equal '(sum {(ratio (term 1/1 {}) over ' \
+      '(term 1/1 {y=>(term 1/1 {})}))=>(ratio (term 1/1 {x=>(term 1/1 {})}) ' \
+      'over (term 1/1 {y=>(term 1/1 {})}))})', Sum.new('x/y').inspect
     assert_equal '(sum {{x=>(term 1/1 {})}=>(term 1/1 {x=>(term 1/1 {})}), ' \
       '{}=>(term 3/1 {})})', Sum.new('x', 3).inspect
   end
@@ -48,6 +58,7 @@ class SumTest < Minitest::Test
     assert_equal craft('-x'), Sum.new('-x').to_lazy
     assert_equal craft('-x + 3'), Sum.new('-x', 3).to_lazy
     assert_equal craft('-x - 3'), Sum.new('-x', -3).to_lazy
+    assert_equal craft('(2x + y) / z'), Sum.new('2x/z', 'y/z').to_lazy
   end
 
   test '==' do
@@ -55,16 +66,21 @@ class SumTest < Minitest::Test
     assert_equal Sum.new(2), Sum.new(2)
     assert_equal Sum.new(2), Sum.new(1, 1)
     assert_equal Sum.new('x'), Sum.new('x')
+    assert_equal Sum.new('3/x'), Sum.new('3/x')
     assert_equal Sum.new('x'), Sum.new('3x', '-2x')
     assert_equal Sum.new('x', 3), Sum.new('3x', 2, '-2x', 1)
     assert_equal Sum.new('x', 'y'), Sum.new('3x', '-2y', '-2x', '3y')
+    assert_equal Sum.new('3/x', '3/y'), Sum.new('3/x', '3/y')
 
     refute_equal Sum.new, Sum.new(3)
     refute_equal Sum.new(3), Sum.new(4)
     refute_equal Sum.new(3), Sum.new('x')
     refute_equal Sum.new('x'), Sum.new('2x')
+    refute_equal Sum.new('3/x'), Sum.new('4/x')
     refute_equal Sum.new('x', 3), Sum.new('x', 4)
     refute_equal Sum.new('x', 3), Sum.new('2x', 3)
+    refute_equal Sum.new('3/x', '3/y'), Sum.new('4/x', '3/y')
+    refute_equal Sum.new('3/x', '3/y'), Sum.new('3/x', '3/z')
   end
 
   test 'eql?' do
@@ -75,6 +91,7 @@ class SumTest < Minitest::Test
     assert Sum.new('x').eql?(Sum.new('3x', '-2x'))
     assert Sum.new('x', 3).eql?(Sum.new('3x', 2, '-2x', 1))
     assert Sum.new('x', 'y').eql?(Sum.new('3x', '-2y', '-2x', '3y'))
+    assert Sum.new('3/x', '3/y').eql?(Sum.new('3/x', '3/y'))
 
     refute Sum.new.eql?(Sum.new(3))
     refute Sum.new(3).eql?(Sum.new(4))
@@ -82,11 +99,13 @@ class SumTest < Minitest::Test
     refute Sum.new('x').eql?(Sum.new('2x'))
     refute Sum.new('x', 3).eql?(Sum.new('x', 4))
     refute Sum.new('x', 3).eql?(Sum.new('2x', 3))
+    refute Sum.new('3/x', '3/y').eql?(Sum.new('3/x', '3/z'))
   end
 
   test 'hash' do
     assert_equal Sum.new.hash, Sum.new.hash
     assert_equal Sum.new(2).hash, Sum.new(2).hash
+    assert_equal Sum.new('3/x').hash, Sum.new('3/x').hash
     assert_equal Sum.new('x', 'y').hash, Sum.new('3x', '-2y', '-2x', '3y').hash
   end
 
@@ -95,6 +114,7 @@ class SumTest < Minitest::Test
     assert_equal 0, Sum.new <=> Sum.new
     assert_equal 0, Sum.new(3) <=> Sum.new(3)
     assert_equal 0, Sum.new('x') <=> Sum.new('x')
+    assert_equal 0, Sum.new('3/x') <=> Sum.new('3/x')
     assert_equal 0, Sum.new('x', 3) <=> Sum.new('x', 3)
 
     # Some of these seem may seem weird, but we're sorting in term order, which
@@ -103,22 +123,29 @@ class SumTest < Minitest::Test
 
     assert_equal 1, Sum.new <=> Sum.new(1)
     assert_equal 1, Sum.new <=> Sum.new('x')
+    assert_equal 1, Sum.new <=> Sum.new('3/x')
 
     assert_equal(-1, Sum.new(1) <=> Sum.new)
     assert_equal(-1, Sum.new('x') <=> Sum.new)
+    assert_equal(-1, Sum.new('x/3') <=> Sum.new)
 
     assert_equal 1, Sum.new(2) <=> Sum.new(3)
     assert_equal 1, Sum.new('y') <=> Sum.new('x')
     assert_equal 1, Sum.new('x') <=> Sum.new('x^2')
+    assert_equal 1, Sum.new('x/y') <=> Sum.new('x^2/y')
+    assert_equal 1, Sum.new('x/z') <=> Sum.new('x/y')
 
     assert_equal(-1, Sum.new(3) <=> Sum.new(2))
     assert_equal(-1, Sum.new('x') <=> Sum.new('y'))
     assert_equal(-1, Sum.new('x^2') <=> Sum.new('x'))
+    assert_equal(-1, Sum.new('x^2/y') <=> Sum.new('x/y'))
+    assert_equal(-1, Sum.new('x/y') <=> Sum.new('x/z'))
     # rubocop:enable Lint/UselessComparison
   end
 
   test 'sort' do
     expected = [
+      Sum.new('x/y', 'x/z'), # TODO This feels like the wrong ordering
       Sum.new('x^2'),
       Sum.new('x'),
       Sum.new('x', 'y'),
@@ -134,6 +161,7 @@ class SumTest < Minitest::Test
       Sum.new(1),
       Sum.new('y'),
       Sum.new('x', 3),
+      Sum.new('x/y', 'x/z'),
       Sum.new('x', 'y'),
       Sum.new,
       Sum.new('x^2'),
@@ -200,6 +228,7 @@ class SumTest < Minitest::Test
     assert_equal Sum.new(-1), -Sum.new(1)
     assert_equal Sum.new('-x'), -Sum.new('x')
     assert_equal Sum.new('x', -3), -Sum.new('-x', 3)
+    assert_equal Sum.new('-x/y'), -Sum.new('x/y')
   end
 
   test '+@' do

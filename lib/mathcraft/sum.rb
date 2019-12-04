@@ -9,12 +9,12 @@ module Mathcraft
     def initialize(*terms)
       terms = terms.map { |t| craft(t).to_immediate }
 
-      unless terms.all?(&:term?)
+      unless terms.all? { |t| t.respond_to?(:likeness) }
         raise "Cannot create sum from non-terms #{terms.inspect}"
       end
 
       @terms = terms.each_with_object(Hash.new(Term.zero)) do |term, h|
-        h[term.variables] += term
+        h[term.likeness] += term
       end
       @terms.reject! { |k, v| v.zero? }
 
@@ -125,7 +125,7 @@ module Mathcraft
       expr = first.to_lazy
 
       rest.each do |term|
-        if term.positive?
+        if leading_sign(term) == '+'
           expr += term.to_lazy
         else
           expr -= term.abs.to_lazy
@@ -184,6 +184,14 @@ module Mathcraft
 
     def to_sum
       self
+    end
+
+    private
+
+    def leading_sign(object)
+      return '-' if object.term? && object.negative?
+
+      '+'
     end
   end
 end

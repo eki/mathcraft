@@ -99,7 +99,7 @@ module Mathcraft
 
     def <=>(other)
       other = craft(other).to_immediate
-      other = other.to_ratio if other.ratio
+      other = other if other.ratio?
       other = Ratio.new(other, Term.one) if other.sum? || other.term?
 
       return nil unless other.ratio?
@@ -110,6 +110,26 @@ module Mathcraft
     def ==(other)
       other.kind_of?(Ratio) && numerator == other.numerator &&
       denominator == other.denominator
+    end
+
+    def eql?(other)
+      self == other
+    end
+
+    def hash
+      [numerator, denominator].hash
+    end
+
+    def zero?
+      numerator.zero?
+    end
+
+    def like?(other)
+      other.ratio? && likeness == other.likeness
+    end
+
+    def likeness
+      Ratio.new(Term.one, denominator)
     end
 
     def to_term
