@@ -7,7 +7,7 @@ module Mathcraft
     # Canonical form could use a hash of { variables => term }, then when
     # adding a new polynomial we can quickly recognize and combine like terms.
     def initialize(*terms)
-      terms = terms.map { |t| craft(t).to_immediate }
+      terms = terms.map { |t| craft!(t) }
 
       unless terms.all? { |t| t.respond_to?(:likeness) }
         raise "Cannot create sum from non-terms #{terms.inspect}"
@@ -30,7 +30,7 @@ module Mathcraft
     end
 
     def +(other)
-      other = craft(other).to_immediate
+      other = craft!(other)
 
       return self if other == Term.zero
       return other if self == Term.zero
@@ -45,11 +45,11 @@ module Mathcraft
     end
 
     def -(other)
-      self + -craft(other).to_immediate
+      self + -craft!(other)
     end
 
     def *(other)
-      other = craft(other).to_immediate
+      other = craft!(other)
       other = Sum.new(other) if other.term?
 
       return undefined if other.undefined?
@@ -62,7 +62,7 @@ module Mathcraft
     end
 
     def /(other)
-      other = craft(other)
+      other = craft!(other)
 
       return Term.one if other == self
       return undefined if other.undefined?
@@ -82,7 +82,7 @@ module Mathcraft
     end
 
     def **(other)
-      other = craft(other)
+      other = craft!(other)
 
       # TODO Is using rational here correct? We want to catch negative
       # integers, for sure, but does the behavior hold for negative fractions?
@@ -111,7 +111,7 @@ module Mathcraft
     alias ^ **
 
     def coerce(other)
-      [self, craft(other).to_immediate]
+      [self, craft!(other)]
     end
 
     def inspect
@@ -140,7 +140,7 @@ module Mathcraft
     end
 
     def <=>(other)
-      other = craft(other).to_immediate
+      other = craft!(other)
 
       other = Sum.new(other) unless other.sum?
 

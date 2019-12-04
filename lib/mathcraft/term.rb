@@ -10,7 +10,7 @@ module Mathcraft
 
       unless coefficient == 0
         variables.each do |k, v|
-          v = craft(v).to_immediate
+          v = craft!(v)
           @variables[craft(k)] = v unless v == 0
         end
       end
@@ -33,7 +33,7 @@ module Mathcraft
     end
 
     def +(other)
-      other = craft(other)
+      other = craft!(other)
 
       return other if self == Term.zero
       return self if other == Term.zero
@@ -55,7 +55,7 @@ module Mathcraft
     end
 
     def *(other)
-      other = craft(other)
+      other = craft!(other)
 
       return other if self == Term.one
       return self if other == Term.one
@@ -75,7 +75,7 @@ module Mathcraft
     end
 
     def /(other)
-      other = craft(other)
+      other = craft!(other)
 
       return undefined if other == Term.zero
       return undefined if other.undefined?
@@ -89,7 +89,7 @@ module Mathcraft
     end
 
     def **(other)
-      other = craft(other)
+      other = craft!(other)
 
       return Term.one if other == Term.zero
       return undefined if other.undefined?
@@ -98,12 +98,12 @@ module Mathcraft
       return Term.one if self == Term.one
 
       new_vars = variables.map { |k, v| [k, v * other] }.to_h
-      new_coeff = craft(1) if coefficient == 1
-      new_coeff = craft(0) if coefficient == 0
+      new_coeff = 1r if coefficient == 1
+      new_coeff = 0r if coefficient == 0
       new_coeff = coefficient**other.to_r if other.rational?
       unless new_coeff
         new_vars[coefficient] = other
-        new_coeff = 1
+        new_coeff = 1r
       end
 
       negative_exponents_to_ratio(Term.new(new_coeff, new_vars))
@@ -112,7 +112,7 @@ module Mathcraft
     alias ^ **
 
     def coerce(other)
-      [self, craft(other).to_immediate]
+      [self, craft!(other)]
     end
 
     def inspect
@@ -147,7 +147,7 @@ module Mathcraft
     end
 
     def <=>(other)
-      other = craft(other).to_immediate
+      other = craft!(other)
 
       if other.term?
         sort_key <=> other.to_term.sort_key

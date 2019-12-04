@@ -9,15 +9,15 @@ module Mathcraft
     # something like (x^2 - 1) / (x - 1) => (x + 1) / 1 => x + 1 (when
     # converting back to an expression in the last step).
     def initialize(numerator, denominator)
-      @numerator, @denominator = numerator, denominator
+      @numerator, @denominator = craft!(numerator), craft!(denominator)
 
-      if denominator.zero?
+      if @denominator.zero?
         @numerator = undefined
         @denominator = undefined
-      elsif numerator.rational? && denominator.rational?
-        r = numerator.to_r / denominator.to_r
-        @numerator = craft(r.numerator).to_immediate
-        @denominator = craft(r.denominator).to_immediate
+      elsif @numerator.rational? && @denominator.rational?
+        r = @numerator.to_r / @denominator.to_r
+        @numerator = craft!(r.numerator)
+        @denominator = craft!(r.denominator)
       end
     end
 
@@ -30,16 +30,17 @@ module Mathcraft
     end
 
     def +(other)
-      other = craft(other).to_immediate
+      other = craft!(other)
 
       return undefined if other.undefined?
 
-      if other.ratio? && other.denominator == denominator
+      if other.term? && denominator == Term.one
+        return Ratio.new(numerator + other, denominator)
+      elsif other.ratio? && other.denominator == denominator
         return Ratio.new(numerator + other.numerator, denominator)
       end
 
-      # TODO Handle other cases
-      nil
+      Sum.new(self, other)
     end
 
     def -(other)
@@ -47,7 +48,7 @@ module Mathcraft
     end
 
     def *(other)
-      other = craft(other).to_immediate
+      other = craft!(other)
 
       return undefined if other.undefined?
 
@@ -60,7 +61,7 @@ module Mathcraft
     end
 
     def /(other)
-      other = craft(other).to_immediate
+      other = craft!(other)
 
       return undefined if other.undefined?
       return Term.one if other == self
@@ -78,7 +79,7 @@ module Mathcraft
     alias ^ **
 
     def coerce(other)
-      [self, craft(other).to_term] # TODO: ???
+      [self, craft!(other)]
     end
 
     def inspect
@@ -98,7 +99,7 @@ module Mathcraft
     end
 
     def <=>(other)
-      other = craft(other).to_immediate
+      other = craft!(other)
       other = other if other.ratio?
       other = Ratio.new(other, Term.one) if other.sum? || other.term?
 
