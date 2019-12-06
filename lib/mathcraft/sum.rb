@@ -2,6 +2,8 @@
 
 module Mathcraft
   class Sum < Immediate
+    include Enumerable
+
     attr_reader :terms
 
     # Canonical form could use a hash of { variables => term }, then when
@@ -112,6 +114,10 @@ module Mathcraft
 
     def coerce(other)
       [self, craft!(other)]
+    end
+
+    def each(&block)
+      terms.values.each(&block)
     end
 
     def inspect

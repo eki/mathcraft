@@ -21,6 +21,10 @@ module Mathcraft
       yield expr
     end
 
+    def atoms
+      args.map(&:atoms).flatten.uniq
+    end
+
     def value
       [operator, *args]
     end

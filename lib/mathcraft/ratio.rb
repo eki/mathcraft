@@ -66,6 +66,7 @@ module Mathcraft
       return undefined if other.undefined?
       return Term.one if other == self
       return self if other == Term.one
+      return self * other.reciprocal if other.term?
 
       nil
     end

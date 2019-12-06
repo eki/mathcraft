@@ -2,6 +2,8 @@
 
 module Mathcraft
   class Term < Immediate
+    include Enumerable
+
     attr_reader :coefficient, :variables
 
     def initialize(coefficient, variables)
@@ -110,6 +112,11 @@ module Mathcraft
     end
 
     alias ^ **
+
+    def each(&block)
+      [craft!(coefficient), *variables.map { |k, exp| craft!(k)**craft!(exp) }].
+        each(&block)
+    end
 
     def coerce(other)
       [self, craft!(other)]

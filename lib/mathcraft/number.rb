@@ -39,5 +39,9 @@ module Mathcraft
     def to_lazy
       self
     end
+
+    def atoms
+      [self]
+    end
   end
 end
