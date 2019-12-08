@@ -61,6 +61,12 @@ class SumTest < Minitest::Test
     assert_equal craft('(2x + y) / z'), Sum.new('2x/z', 'y/z').to_lazy
   end
 
+  test 'to_immediate' do
+    sum = Sum.new('x', 'y')
+
+    assert_equal sum.object_id, sum.to_immediate.object_id
+  end
+
   test '==' do
     assert_equal Sum.new, Sum.new
     assert_equal Sum.new(2), Sum.new(2)

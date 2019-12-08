@@ -32,6 +32,12 @@ class RatioTest < Minitest::Test
       Ratio.new('2x^2 + 10', 'y - 1').to_lazy
   end
 
+  test 'to_immediate' do
+    ratio = Ratio.new('x', 'y')
+
+    assert_equal ratio.object_id, ratio.to_immediate.object_id
+  end
+
   test '==' do
     assert_equal Ratio.new('x', 2), Ratio.new('x', 2)
     assert_equal Ratio.new(1, 2), Ratio.new(4, 8)

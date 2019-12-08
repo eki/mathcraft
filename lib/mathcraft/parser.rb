@@ -52,11 +52,16 @@ module Mathcraft
       scanner.remaining? && !scanner.check(/\s*(\)|=|\z)/)
     end
 
+    ASSOCIATIVITY = {
+      '^' => 1,
+      '*' => 0,
+      '/' => 0,
+      '+' => 0,
+      '-' => 0
+    }.freeze
+
     def assoc(operator)
-      case operator
-      when '^' then 1
-      else 0
-      end
+      ASSOCIATIVITY[operator]
     end
 
     PRECEDENCE = {

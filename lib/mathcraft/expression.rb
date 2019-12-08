@@ -55,26 +55,27 @@ module Mathcraft
       map { |expr| expr == self ? self : expr.to_lazy }
     end
 
-    # TODO There must be a better way to do this?
     def to_s
       left, right = args[0], args[1]
+
+      if left.expression? && prec(left.operator) < prec(operator)
+        left = "(#{left})"
+      end
+
+      if right.expression? &&
+         prec(right.operator) <= prec(operator) - assoc(operator)
+
+        right = "(#{right})"
+      end
+
+      if operator == '*' && left == '-1'
+        left = '-'
+      end
+
       case operator
-      when %r{[+/-]}
-        left = "(#{left})" if parenthesize?(left)
-        right = "(#{right})" if parenthesize?(right, right: true)
-
-        "#{left} #{operator} #{right}"
-      when '*'
-        ary = []
-        ary << (left == -1 ? '-' : left)
-        if parenthesize_right?(right)
-          ary << '(' << right << ')'
-        else
-          ary << right
-        end
-
-        ary.map(&:to_s).join
-      when '^' then "#{left}^#{right}"
+      when %r{[+/-]} then [left, operator, right].join(' ')
+      when '*' then [left, right].join
+      when '^' then [left, operator, right].join
       else "#{operator}(#{args.join(', ')})"
       end
     end
@@ -85,15 +86,12 @@ module Mathcraft
 
     private
 
-    def parenthesize?(expr, right: false)
-      n = right ? -1 : 0
-      expr.expression? &&
-      Parser::PRECEDENCE[expr.operator] + n < Parser::PRECEDENCE[operator]
+    def prec(operator)
+      Parser::PRECEDENCE[operator]
     end
 
-    def parenthesize_right?(expr)
-      expr.number? ||
-      (expr.expression? && !(expr.operator == '^' && expr.args.first.variable?))
+    def assoc(operator)
+      Parser::ASSOCIATIVITY[operator]
     end
 
     def op_to_ruby(op)

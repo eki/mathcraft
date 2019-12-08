@@ -113,11 +113,6 @@ module Mathcraft
 
     alias ^ **
 
-    def each(&block)
-      [craft!(coefficient), *variables.map { |k, exp| craft!(k)**craft!(exp) }].
-        each(&block)
-    end
-
     def coerce(other)
       [self, craft!(other)]
     end

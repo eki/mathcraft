@@ -206,4 +206,15 @@ class ExpressionTest < Minitest::Test
     assert Sum.new(craft('x').to_immediate, craft('2').to_immediate,
       craft('3z').to_immediate), craft('3z + z + 2').to_immediate
   end
+
+  test 'to_s' do
+    assert_equal '3 + 4', craft('3 + 4').to_s
+    assert_equal '3x', craft('3x').to_s
+    assert_equal 'ab / (cd)', craft('ab / (cd)').to_s
+    assert_equal 'x^2', craft('x^2').to_s
+    assert_equal 'x^(y - 3)', craft('x^(y - 3)').to_s
+    assert_equal '(x + 2) / (y - 2)', craft('(x + 2) / (y - 2)').to_s
+    assert_equal 'x^y^-2', craft('x^y^-2').to_s
+    assert_equal '(x + 3)^(yz)^4', craft('(x + 3)^(yz)^4').to_s
+  end
 end

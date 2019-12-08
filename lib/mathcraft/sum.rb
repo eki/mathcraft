@@ -2,20 +2,13 @@
 
 module Mathcraft
   class Sum < Immediate
-    include Enumerable
-
     attr_reader :terms
 
     # Canonical form could use a hash of { variables => term }, then when
     # adding a new polynomial we can quickly recognize and combine like terms.
     def initialize(*terms)
       terms = terms.map { |t| craft!(t) }
-
       terms = terms.map { |t| t.sum? ? t.terms.values : t }.flatten
-
-      unless terms.all? { |t| t.respond_to?(:likeness) }
-        raise "Cannot create sum from non-terms #{terms.inspect}"
-      end
 
       @terms = terms.each_with_object(Hash.new(Term.zero)) do |term, h|
         h[term.likeness] += term
@@ -44,8 +37,6 @@ module Mathcraft
       when Term then Sum.new(*terms.values, other).downgrade
       when Ratio then Sum.new(*terms.values, other).downgrade
       when Sum then Sum.new(*terms.values, *other.terms.values).downgrade
-      else
-        raise "Don't know how to add #{other} (#{other.class}) to #{self} (Sum)"
       end
     end
 
@@ -117,10 +108,6 @@ module Mathcraft
 
     def coerce(other)
       [self, craft!(other)]
-    end
-
-    def each(&block)
-      terms.values.each(&block)
     end
 
     def inspect

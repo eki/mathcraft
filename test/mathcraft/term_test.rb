@@ -72,6 +72,12 @@ class TermTest < Minitest::Test
       Term.new(3, craft('x') => 2, craft('y') => 2).to_lazy
   end
 
+  test 'to_immediate' do
+    term = Term.new(2, craft('x') => 2)
+
+    assert_equal term.object_id, term.to_immediate.object_id
+  end
+
   test '==' do
     assert_equal Term.one, Term.one
     assert_equal Term.new(3, craft('x') => 1), Term.new(3, craft('x') => 1)
