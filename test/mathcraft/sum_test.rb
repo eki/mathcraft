@@ -247,11 +247,11 @@ class SumTest < Minitest::Test
   end
 
   test '+ like' do
-    assert_equal Sum.new(4), Sum.new(1) + Sum.new(3)
-    assert_equal Sum.new('5x'), Sum.new('x', 'x') + Sum.new('x', '3x', '-x')
+    assert_equal craft!(4), Sum.new(1) + Sum.new(3)
+    assert_equal craft!('5x'), Sum.new('x', 'x') + Sum.new('x', '3x', '-x')
     assert_equal Sum.new('2x', '3y'), Sum.new('x', 'y') + Sum.new('x', '2y')
 
-    assert_equal Sum.new(0), Sum.new('3xyz') + Sum.new('-3xyz')
+    assert_equal Term.zero, Sum.new('3xyz') + Sum.new('-3xyz')
   end
 
   test '+ unlike' do
@@ -271,11 +271,11 @@ class SumTest < Minitest::Test
   end
 
   test '- like' do
-    assert_equal Sum.new(-2), Sum.new(1) - Sum.new(3)
-    assert_equal Sum.new('-x'), Sum.new('x', 'x') - Sum.new('x', '3x', '-x')
-    assert_equal Sum.new('-y'), Sum.new('x', 'y') - Sum.new('x', '2y')
+    assert_equal craft!(-2), Sum.new(1) - Sum.new(3)
+    assert_equal craft!('-x'), Sum.new('x', 'x') - Sum.new('x', '3x', '-x')
+    assert_equal craft!('-y'), Sum.new('x', 'y') - Sum.new('x', '2y')
 
-    assert_equal Sum.new('6xyz'), Sum.new('3xyz') - Sum.new('-3xyz')
+    assert_equal craft!('6xyz'), Sum.new('3xyz') - Sum.new('-3xyz')
   end
 
   test '- unlike' do

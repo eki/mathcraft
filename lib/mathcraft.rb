@@ -22,6 +22,7 @@ require 'mathcraft/ratio'  # division
 require 'mathcraft/equation' # Both lazy and immediate
 
 require 'mathcraft/parser'
+require 'mathcraft/solver'
 
 module Mathcraft
   extend self
@@ -29,8 +30,7 @@ module Mathcraft
   # "Craft" the given object into a lazy expression tree.
   def craft(object)
     case object
-    when Lazy then object
-    when Immediate then object.to_lazy
+    when Object then object.immediate? ? object.to_lazy : object
     when Rational
       if object.denominator == 1
         craft(object.numerator)
@@ -47,7 +47,7 @@ module Mathcraft
   # "Craft" the given object into an immediate representation.
   def craft!(object)
     case object
-    when Immediate then object
+    when Object then object.lazy? ? object.to_immediate : object
     else craft(object).to_immediate
     end
   end

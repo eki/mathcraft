@@ -61,7 +61,7 @@ module Mathcraft
       case operator
       when %r{[+/-]}
         left = "(#{left})" if parenthesize?(left)
-        right = "(#{right})" if parenthesize?(right)
+        right = "(#{right})" if parenthesize?(right, right: true)
 
         "#{left} #{operator} #{right}"
       when '*'
@@ -85,9 +85,10 @@ module Mathcraft
 
     private
 
-    def parenthesize?(expr)
+    def parenthesize?(expr, right: false)
+      n = right ? -1 : 0
       expr.expression? &&
-      Parser::PRECEDENCE[expr.operator] < Parser::PRECEDENCE[operator]
+      Parser::PRECEDENCE[expr.operator] + n < Parser::PRECEDENCE[operator]
     end
 
     def parenthesize_right?(expr)

@@ -34,5 +34,4 @@ class SolveTest < Minitest::Test
   test 'something more complicated' do
     assert_solved 'y = x', '(4y - 8) / (2x - 4) = 2'
   end
-
 end

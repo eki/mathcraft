@@ -57,6 +57,14 @@ class CraftTest < Minitest::Test
     assert_equal Expression, craft('x^2 / 4').class
   end
 
+  test 'craft with equation' do
+    eq = Equation.new(craft('x'), craft('3'))
+
+    assert_equal eq, craft('x = 3')
+    assert_equal eq.object_id, craft(eq).object_id
+    assert craft('x = 3').lazy?
+  end
+
   test 'craft! with nil raises' do
     assert_raises { craft!(nil) }
   end
@@ -102,8 +110,16 @@ class CraftTest < Minitest::Test
     assert_equal x.object_id, craft!(x).object_id
   end
 
-  test 'craft with string is parsed' do
+  test 'craft! with string is parsed' do
     assert_equal Sum.new('x^2', 'y'), craft!('x^2 + y')
     assert_equal Sum.new('3/y', -10), craft!('3/y - 10')
+  end
+
+  test 'craft! with equation' do
+    eq = Equation.new(craft!('x'), craft!('3'))
+
+    assert_equal eq, craft!('x = 3')
+    assert_equal eq.object_id, craft!(eq).object_id
+    assert craft!('x = 3').immediate?
   end
 end

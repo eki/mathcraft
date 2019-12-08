@@ -33,11 +33,12 @@ module Mathcraft
       other = craft!(other)
 
       return undefined if other.undefined?
+      return self if other.term? && other.zero?
 
       if other.term? && denominator == Term.one
-        return Ratio.new(numerator + other, denominator)
+        return Ratio.new(numerator + other, denominator).downgrade
       elsif other.ratio? && other.denominator == denominator
-        return Ratio.new(numerator + other.numerator, denominator)
+        return Ratio.new(numerator + other.numerator, denominator).downgrade
       end
 
       Sum.new(self, other)
@@ -51,28 +52,41 @@ module Mathcraft
       other = craft!(other)
 
       return undefined if other.undefined?
+      return self if other.term? && other.one?
+      return Term.zero if other.term? && other.zero?
 
-      if other == denominator
-        numerator
-      else
-        # TODO Does this hold for all types of other?
-        numerator * other / denominator
-      end
+      # This will always be more efficient, but is currently necessary because
+      # ratios do not know how to simplify when there are unknowns involved
+      # (especially sums).
+      return numerator if other == denominator
+
+      other = Ratio.new(other, Term.one) unless other.ratio?
+
+      Ratio.new(numerator * other.numerator, denominator * other.denominator).
+        downgrade
     end
 
     def /(other)
       other = craft!(other)
 
       return undefined if other.undefined?
+      return undefined if other.term? && other.zero?
       return Term.one if other == self
       return self if other == Term.one
       return self * other.reciprocal if other.term?
 
-      nil
+      other = Ratio.new(other, Term.one) if other.term? || other.sum?
+
+      return self * other.reciprocal if other.ratio?
     end
 
     def **(other)
+      other = craft!(other)
+
       return undefined if other.undefined?
+      return Term.one if other.term? && other.zero?
+      return self if other.term? && other.one?
+      return Ratio.new(numerator**other, denominator**other) if other.term?
 
       nil
     end
@@ -134,12 +148,26 @@ module Mathcraft
       Ratio.new(Term.one, denominator)
     end
 
+    def reciprocal
+      Ratio.new(denominator, numerator)
+    end
+
     def to_term
-      numerator.to_term if denominator == Term.one && numerator.term?
+      if denominator.rational? && numerator.term?
+        numerator.to_term / denominator
+      end
     end
 
     def to_sum
       numerator.to_sum if denominator == Term.one && numerator.sum?
+    end
+
+    def to_zero
+      Term.zero if numerator == Term.zero
+    end
+
+    def downgrade
+      to_zero || to_sum || to_term || self
     end
   end
 end

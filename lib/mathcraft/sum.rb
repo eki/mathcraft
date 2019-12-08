@@ -11,6 +11,8 @@ module Mathcraft
     def initialize(*terms)
       terms = terms.map { |t| craft!(t) }
 
+      terms = terms.map { |t| t.sum? ? t.terms.values : t }.flatten
+
       unless terms.all? { |t| t.respond_to?(:likeness) }
         raise "Cannot create sum from non-terms #{terms.inspect}"
       end
@@ -39,8 +41,9 @@ module Mathcraft
 
       case other
       when Undefined then undefined
-      when Term then Sum.new(*terms.values, other)
-      when Sum then Sum.new(*terms.values, *other.terms.values)
+      when Term then Sum.new(*terms.values, other).downgrade
+      when Ratio then Sum.new(*terms.values, other).downgrade
+      when Sum then Sum.new(*terms.values, *other.terms.values).downgrade
       else
         raise "Don't know how to add #{other} (#{other.class}) to #{self} (Sum)"
       end
@@ -52,7 +55,7 @@ module Mathcraft
 
     def *(other)
       other = craft!(other)
-      other = Sum.new(other) if other.term?
+      other = Sum.new(other) if other.term? || other.ratio?
 
       return undefined if other.undefined?
       return Term.zero if other == Term.zero || self == Term.zero
@@ -60,7 +63,7 @@ module Mathcraft
       return other if self == Term.one
 
       new_terms = terms.values.product(other.terms.values).map { |a, b| a * b }
-      Sum.new(*new_terms)
+      Sum.new(*new_terms).downgrade
     end
 
     def /(other)
@@ -186,6 +189,10 @@ module Mathcraft
 
     def to_term
       terms.values.first if terms.length == 1
+    end
+
+    def downgrade
+      to_term || self
     end
 
     def to_sum
