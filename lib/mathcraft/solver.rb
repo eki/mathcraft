@@ -22,6 +22,7 @@ module Mathcraft
         last = eq
         eq = move_everything_to_the_left(eq)
         eq = move_everything_not_variable_to_the_right(eq, variable)
+        eq = divide_out_lowest_common_variable(eq, variable)
         eq = undo_multiplication(eq, variable)
         eq = undo_division(eq, variable)
       end
@@ -40,6 +41,29 @@ module Mathcraft
         im.left.terms.values.each do |t|
           im += -t unless t.to_lazy.atoms.include?(variable)
         end
+      end
+
+      im.to_lazy
+    end
+
+    def divide_out_lowest_common_variable(equation, variable)
+      im = equation.to_immediate
+
+      if im.left.sum?
+        lowest = nil
+
+        im.left.terms.values.each do |t|
+          return equation unless t.term?
+
+          exp = t.variables[variable]
+
+          return equation unless exp.rational?
+
+          lowest ||= exp
+          lowest = exp if exp.to_r < lowest.to_r
+        end
+
+        im /= Term.new(1, variable => lowest)
       end
 
       im.to_lazy

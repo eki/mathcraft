@@ -352,6 +352,13 @@ class SumTest < Minitest::Test
     assert_equal b, ratio.denominator
   end
 
+  test '/ by term is distributed' do
+    a = Sum.new('x^2', 'x')
+    b = Term.new(1, craft('x') => 1)
+
+    assert_equal Sum.new('x', 1), a / b
+  end
+
   test '/' do
     a = Sum.new('10x', '12y')
     b = Sum.new('2')

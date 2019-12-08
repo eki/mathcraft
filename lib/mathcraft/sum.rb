@@ -68,11 +68,12 @@ module Mathcraft
 
       if other.rational?
         Term.new(other.to_r, {}).reciprocal * self
+      elsif other.term?
+        # Distribute when dividing by a single term
+        new_terms = terms.values.map { |t| t / other }
+        Sum.new(*new_terms).downgrade
       else
-        # TODO This is lazy. For multiplication we distribute. We could
-        # distribute here, too, but then we'd likely need to produce a sum of
-        # ratios. Since sum currently doesn't support ratios (bad!) this is a
-        # problem.
+        # TODO Still punting on sum divided by sum
         Ratio.new(self, other)
       end
     end

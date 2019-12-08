@@ -34,4 +34,22 @@ class SolveTest < Minitest::Test
   test 'something more complicated' do
     assert_solved 'y = x', '(4y - 8) / (2x - 4) = 2'
   end
+
+  # TODO We'll also want to deal with exponents in this test (besides those
+  # that arise naturally from multiplying by x.
+  test 'random' do
+    ops = %i(+ - * /)
+    numbers = (1..10).to_a
+    variables = %w(x y z)
+    terms = numbers + variables
+
+    20.times do
+      eq = craft('x = 1')
+      10.times do
+        eq = eq.send(ops.sample, terms.sample)
+      end
+      assert_equal craft('x = 1'), solution = eq.solve,
+        "Expected #{eq} to solve to x = 1, but was: #{solution}"
+    end
+  end
 end
