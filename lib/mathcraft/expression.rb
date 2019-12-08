@@ -52,6 +52,8 @@ module Mathcraft
     end
 
     def to_lazy
+      # TODO Probably don't need to be this paranoid that something not-lazy
+      # has been mixed into our expression tree..?
       map { |expr| expr == self ? self : expr.to_lazy }
     end
 

@@ -43,8 +43,6 @@ module Mathcraft
       # other should only be Sum or Ratio?
       return other + self unless other.term?
 
-      other = other.to_term
-
       if like?(other)
         Term.new(coefficient + other.coefficient, variables)
       else
@@ -67,8 +65,6 @@ module Mathcraft
       # Sum and Ratio are the only things that are not terms, they will know
       # better how to do the multiplication
       return other * self unless other.term?
-
-      other = other.to_term
 
       new_coefficient = coefficient * other.coefficient
       new_variables = Hash.new(0).merge(variables)
@@ -152,7 +148,7 @@ module Mathcraft
       other = craft!(other)
 
       if other.term?
-        sort_key <=> other.to_term.sort_key
+        sort_key <=> other.sort_key
       elsif other.ratio?
         Ratio.new(self, Term.one) <=> other
       end
@@ -164,10 +160,6 @@ module Mathcraft
 
     def hash
       [coefficient, variables].hash
-    end
-
-    def to_term
-      self
     end
 
     def positive?
@@ -191,7 +183,7 @@ module Mathcraft
     end
 
     def like?(other)
-      other.term? && variables == other.to_term.variables
+      other.term? && variables == other.variables
     end
 
     def likeness

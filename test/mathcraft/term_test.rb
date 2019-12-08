@@ -170,11 +170,6 @@ class TermTest < Minitest::Test
     assert Term.new(3, craft('x') => 1).term?
   end
 
-  test 'to_term' do
-    term = Term.new(Rational(1, 2), craft('z') => 50)
-    assert_equal term.object_id, term.to_term.object_id
-  end
-
   test 'positive?' do
     assert Term.new(3, {}).positive?
     refute Term.zero.positive?

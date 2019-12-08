@@ -154,7 +154,7 @@ module Mathcraft
 
     def to_term
       if denominator.rational? && numerator.term?
-        numerator.to_term / denominator
+        numerator / denominator
       end
     end
 

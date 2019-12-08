@@ -108,6 +108,12 @@ class NumberTest < Minitest::Test
     assert_equal 3, Number.new(3).to_numeric
   end
 
+  test 'to_lazy' do
+    number = Number.new(3)
+
+    assert_equal number.object_id, number.to_lazy.object_id
+  end
+
   test 'to_immediate' do
     assert_equal Term.new(1, {}), Number.new(1).to_immediate
   end

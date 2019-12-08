@@ -29,14 +29,6 @@ module Mathcraft
       @solution = eq
     end
 
-    def left
-      equation.left
-    end
-
-    def right
-      equation.right
-    end
-
     def move_everything_to_the_left(equation)
       (equation.to_immediate - equation.right).to_lazy
     end

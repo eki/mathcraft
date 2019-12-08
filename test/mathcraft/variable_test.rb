@@ -72,6 +72,12 @@ class VariableTest < Minitest::Test
     assert Variable.new('x').lazy?
   end
 
+  test 'to_lazy' do
+    variable = Variable.new('x')
+
+    assert_equal variable.object_id, variable.to_lazy.object_id
+  end
+
   test 'immediate?' do
     refute Variable.new('x').immediate?
   end

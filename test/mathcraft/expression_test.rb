@@ -176,6 +176,12 @@ class ExpressionTest < Minitest::Test
     assert_equal Rational(3, 4), craft('(5 - 2) / (1+1)^2').to_r
   end
 
+  test 'to_lazy' do
+    expression = craft('x + 3')
+
+    assert_equal expression.object_id, expression.to_lazy.object_id
+  end
+
   test 'to_immediate (terms)' do
     assert_equal Term.new(12, {}), craft('3 * 4').to_immediate
     assert_equal Term.new(3, craft('x') => 1), craft('3 * x').to_immediate
@@ -216,5 +222,9 @@ class ExpressionTest < Minitest::Test
     assert_equal '(x + 2) / (y - 2)', craft('(x + 2) / (y - 2)').to_s
     assert_equal 'x^y^-2', craft('x^y^-2').to_s
     assert_equal '(x + 3)^(yz)^4', craft('(x + 3)^(yz)^4').to_s
+
+    # This looks funny because the 3y seems to bind more tightly because they
+    # are grouped. But, the do not *actually* bind more tightly.
+    assert_equal '1 / 3y', craft('(1 / 3)y').to_s
   end
 end

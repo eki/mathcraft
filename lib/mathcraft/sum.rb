@@ -182,10 +182,6 @@ module Mathcraft
       to_term || self
     end
 
-    def to_sum
-      self
-    end
-
     private
 
     def leading_sign(object)

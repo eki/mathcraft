@@ -36,10 +36,6 @@ module Mathcraft
       Term.new(value, {})
     end
 
-    def to_lazy
-      self
-    end
-
     def atoms
       [self]
     end

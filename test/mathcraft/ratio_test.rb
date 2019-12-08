@@ -252,4 +252,8 @@ class RatioTest < Minitest::Test
 
     assert_equal Ratio.new('x^3', 'y^3'), a**b
   end
+
+  test 'coerce' do
+    assert_equal Sum.new(4, Ratio.new('x', 3)), 4 + Ratio.new('x', 3)
+  end
 end
