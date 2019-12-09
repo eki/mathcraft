@@ -86,4 +86,13 @@ class VariableTest < Minitest::Test
     assert_equal Term.new(1, Variable.new('x') => 1),
       Variable.new('x').to_immediate
   end
+
+  test 'substitute' do
+    a = Variable.new('a')
+    b = Variable.new('b')
+    c = Variable.new('c')
+
+    assert_equal a, a.substitute(b, c)
+    assert_equal b, a.substitute(a, b)
+  end
 end

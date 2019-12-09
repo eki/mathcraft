@@ -33,6 +33,39 @@ class SolveTest < Minitest::Test
 
   test 'something more complicated' do
     assert_solved 'y = x', '(4y - 8) / (2x - 4) = 2'
+    assert_solved 'x = 5', '3x / (x - 2) = (3x + 10) / x'
+    assert_solved 'x = 20', '3x / (x - 2) = (3x + 10) / (x + 1)'
+    assert_solved 'x = 28', '(1/4)x - 3 = 4'
+  end
+
+  test 'multiple solutions' do
+    eq = craft('(x + 2)(2x -1) = 0')
+    solutions = eq.solve
+    assert_equal 2, solutions.length
+    assert_equal [craft('x = 1 / 2'), craft('x = -2')], solutions.sort
+
+    eq = craft('(7 - 2y)(5 + y) = 0')
+    solutions = eq.solve
+    assert_equal 2, solutions.length
+    assert_equal [craft('y = 7 / 2'), craft('y = -5')], solutions.sort
+
+    eq = craft('x^4 - 15x^2 - 10x + 24 = 0')
+    solutions = eq.solve
+    assert_equal 4, solutions.length
+    assert_equal [craft('x = -3'), craft('x = -2'), craft('x = 1'),
+      craft('x = 4')], solutions.sort
+  end
+
+  test 'solution is all real numbers' do
+    eq = craft('5(- 3x - 2) - (x - 3) = -4(4x + 5) + 13')
+    solutions = eq.solve
+    assert_equal true, solutions
+  end
+
+  test 'no solution' do
+    eq = craft('3x / (x + 1) + 6 = -3 / (x + 1)')
+    solution = eq.solve
+    refute solution, "Expected no solution to #{eq}, got #{solution}"
   end
 
   # TODO We'll also want to deal with exponents in this test (besides those

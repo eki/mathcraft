@@ -117,4 +117,18 @@ class NumberTest < Minitest::Test
   test 'to_immediate' do
     assert_equal Term.new(1, {}), Number.new(1).to_immediate
   end
+
+  test 'substitute' do
+    one = Number.new(1)
+    two = Number.new(2)
+    three = Number.new(3)
+
+    assert_equal one, one.substitute(two, three)
+    assert_equal two, one.substitute(one, two)
+  end
+
+  test 'factors' do
+    assert_equal [1, 2, 3, 4, 6, 12], Number.new(12).factors
+    assert_equal [1, 3, 9], Number.new(9).factors
+  end
 end

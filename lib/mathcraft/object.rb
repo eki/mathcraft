@@ -17,5 +17,9 @@ module Mathcraft
     def eql?(other)
       self == other
     end
+
+    def simplify
+      to_immediate.to_lazy
+    end
   end
 end

@@ -46,14 +46,13 @@ module Mathcraft
 
     def *(other)
       other = craft!(other)
-      other = Sum.new(other) if other.term? || other.ratio?
 
       return undefined if other.undefined?
       return Term.zero if other == Term.zero || self == Term.zero
       return self if other == Term.one
       return other if self == Term.one
 
-      new_terms = terms.values.product(other.terms.values).map { |a, b| a * b }
+      new_terms = terms.values.map { |t| t * other }
       Sum.new(*new_terms).downgrade
     end
 
@@ -72,6 +71,8 @@ module Mathcraft
         # Distribute when dividing by a single term
         new_terms = terms.values.map { |t| t / other }
         Sum.new(*new_terms).downgrade
+      elsif polynomial? && other.sum? && other.polynomial?
+        poly_div(self, other)
       else
         # TODO Still punting on sum divided by sum
         Ratio.new(self, other)
@@ -183,12 +184,82 @@ module Mathcraft
       to_term || self
     end
 
+    def polynomial?
+      terms.values.all? do |term|
+        term.term? && term.monomial?
+      end
+    end
+
+    def degree
+      return terms.values.map(&:degree).max if polynomial?
+    end
+
+    def lead
+      terms.values.min
+    end
+
+    def constant
+      terms.values.find(&:rational?) || Term.zero
+    end
+
+    # Use rational roots to try to find any factors.
+    # TODO: Should we always return self if no factors are found?
+    # Currently returns nil if multiple rational factors are not found.
+    def factors
+      return nil unless polynomial? && degree > 1
+
+      return nil unless lead.coefficient.denominator == 1
+      return nil unless constant&.coefficient&.denominator == 1
+
+      lead_factors = craft(lead.coefficient.abs).factors
+      constant_factors = craft(constant.coefficient.abs).factors
+
+      possible_roots = constant_factors.product(lead_factors).
+        map { |a, b| [Rational(-a, b), Rational(a, b)] }.flatten
+
+      variable = lead.variables.keys.
+        find { |v| lead.variables[v] == lead.degree }
+
+      factors = []
+
+      possible_roots.each do |root|
+        if to_lazy.substitute(variable, root).to_immediate == Term.zero
+          factors << craft!(variable) - root
+        end
+      end
+
+      found = factors.inject('*')
+
+      if found == self
+        factors.length == 1 ? nil : factors
+      elsif found
+        factors + [self / found]
+      end
+    end
+
     private
 
     def leading_sign(object)
       return '-' if object.term? && object.negative?
 
       '+'
+    end
+
+    def poly_div(n, d)
+      q, r = Term.zero, n
+
+      while r != Term.zero && r.degree >= d.degree
+        t = r.lead / d.lead
+
+        return Ratio.new(n, d) if t.ratio?
+
+        q += t
+        r -= t * d
+      end
+
+      return Ratio.new(n, d) if r != Term.zero
+
+      q + r
     end
   end
 end

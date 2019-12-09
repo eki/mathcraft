@@ -151,6 +151,8 @@ module Mathcraft
         sort_key <=> other.sort_key
       elsif other.ratio?
         Ratio.new(self, Term.one) <=> other
+      elsif other.sum?
+        Sum.new(self) <=> other
       end
     end
 
@@ -192,6 +194,16 @@ module Mathcraft
 
     def abs
       positive? ? self : -self
+    end
+
+    def monomial?
+      variables.all? do |v, exp|
+        exp.rational? && exp.positive? && exp.to_r.denominator == 1
+      end
+    end
+
+    def lead
+      self if monomial?
     end
 
     # Not the right term?

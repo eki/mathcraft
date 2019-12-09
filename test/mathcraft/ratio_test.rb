@@ -12,6 +12,15 @@ class RatioTest < Minitest::Test
     assert_equal craft!(2), ratio.denominator
   end
 
+  test 'new reduces' do
+    skip('Would this happen in Sum#/ ?')
+
+    ratio = Ratio.new('x^2 + 2x + 1', 'x + 1')
+
+    assert_equal craft!('x + 1'), ratio.numerator
+    assert_equal craft!(1), ratio.denominator
+  end
+
   test 'to_s' do
     assert_equal 'x / 2', Ratio.new('x', 2).to_s
     assert_equal '1 / y', Ratio.new(1, 'y').to_s

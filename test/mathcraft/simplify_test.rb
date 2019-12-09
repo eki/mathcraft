@@ -8,7 +8,7 @@ class SimplifyTest < Minitest::Test
   def assert_simplified(expected, other)
     expected, other = craft(expected), craft(other)
 
-    assert_equal expected, other.to_immediate.to_lazy,
+    assert_equal expected, other.simplify,
       "Expected #{other.inspect} to simplify to #{expected.inspect}"
   end
 

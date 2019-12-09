@@ -21,13 +21,40 @@ module Mathcraft
 
         last = eq
         eq = move_everything_to_the_left(eq)
+
+        return solve_poly(eq, variable) if solve_poly?(eq, variable)
+
         eq = move_everything_not_variable_to_the_right(eq, variable)
         eq = divide_out_lowest_common_variable(eq, variable)
         eq = undo_multiplication(eq, variable)
         eq = undo_division(eq, variable)
       end
 
+      return true if eq.left == eq.right # all numbers are solutions (?)
+
       @solution = eq
+      @solution = nil unless check
+      @solution
+    end
+
+    def solve_poly(eq, variable)
+      if factors = eq.left.to_immediate.factors.map(&:to_lazy)
+        factors.select! { |f| f.atoms.include?(variable) }
+        factors.map do |f|
+          Equation.new(f.to_lazy, Mathcraft.craft(0)).solve(variable)
+        end
+      end
+    end
+
+    def solve_poly?(eq, variable)
+      im = eq.to_immediate
+      im.left.sum? && im.left.polynomial? && im.right == Term.zero &&
+      im.left.factors
+    end
+
+    def check
+      eq = equation.substitute(solution.left, solution.right).to_immediate
+      !eq.left.undefined? && !eq.right.undefined? && eq.left == eq.right
     end
 
     def move_everything_to_the_left(equation)
@@ -76,7 +103,7 @@ module Mathcraft
         term = Term.new(im.left.coefficient,
           im.left.variables.reject { |k, v| k == variable })
 
-        im /= term
+        im /= term unless term == Term.zero
       end
 
       im.to_lazy
@@ -85,8 +112,11 @@ module Mathcraft
     def undo_division(equation, variable)
       im = equation.to_immediate
 
-      if im.left.ratio?
-        im *= im.left.denominator
+      ratio = im.left if im.left.ratio?
+      ratio = im.left.terms.values.find(&:ratio?) if im.left.sum?
+
+      if ratio
+        im *= ratio.denominator
       end
 
       im.to_lazy

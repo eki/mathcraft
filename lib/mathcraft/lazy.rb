@@ -44,6 +44,10 @@ module Mathcraft
       value.hash
     end
 
+    def substitute(a, b)
+      self == a ? b : self
+    end
+
     def to_s
       value.to_s
     end

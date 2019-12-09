@@ -166,8 +166,12 @@ module Mathcraft
       Term.zero if numerator == Term.zero
     end
 
+    def to_one
+      Term.one if numerator == denominator
+    end
+
     def downgrade
-      to_zero || to_sum || to_term || self
+      to_zero || to_one || to_sum || to_term || self
     end
   end
 end

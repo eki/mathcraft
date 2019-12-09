@@ -38,6 +38,11 @@ module Mathcraft
 
     alias ^ **
 
+    def substitute(a, b)
+      eq = to_lazy
+      Equation.new(eq.left.substitute(a, b), eq.right.substitute(a, b))
+    end
+
     def to_lazy
       return self if lazy?
 

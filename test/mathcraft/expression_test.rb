@@ -227,4 +227,13 @@ class ExpressionTest < Minitest::Test
     # are grouped. But, the do not *actually* bind more tightly.
     assert_equal '1 / 3y', craft('(1 / 3)y').to_s
   end
+
+  test 'substitute' do
+    expr = craft('(3 - x) / (x + y + 2)')
+    x = craft('x')
+    one = craft(1)
+
+    assert_equal expr, expr.substitute(craft('z'), one)
+    assert_equal craft('(3 - 1) / (1 + y + 2)'), expr.substitute(x, one)
+  end
 end

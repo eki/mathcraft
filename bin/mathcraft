@@ -31,7 +31,18 @@ load_history
 
 while buf = Readline.readline('mathcraft> ', true)
   begin
-    puts Mathcraft.craft(buf).to_immediate.to_lazy.to_s
+    obj = Mathcraft.craft(buf)
+    if obj.equation?
+      solutions = obj.solve
+      case solutions
+      when nil then puts 'no solution'
+      when true then puts 'all real numbers'
+      when Array then puts solutions.map(&:to_s).join(', ')
+      else puts solutions.to_s
+      end
+    else
+      puts obj.simplify.to_s
+    end
   rescue => e
     puts e
   end

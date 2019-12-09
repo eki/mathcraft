@@ -57,6 +57,10 @@ module Mathcraft
       map { |expr| expr == self ? self : expr.to_lazy }
     end
 
+    def substitute(a, b)
+      map { |expr| expr == a ? b : expr }
+    end
+
     def to_s
       left, right = args[0], args[1]
 

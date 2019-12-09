@@ -39,5 +39,16 @@ module Mathcraft
     def atoms
       [self]
     end
+
+    def factors
+      ary = []
+      1.upto(Math.sqrt(value)).each do |i|
+        if value % i == 0
+          ary << i
+          ary << value / i
+        end
+      end
+      ary.sort.uniq
+    end
   end
 end
