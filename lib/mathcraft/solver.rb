@@ -17,7 +17,10 @@ module Mathcraft
 
       until eq == last
         n += 1
-        raise 'Possible infinite loop!' if n > 10
+        if n > 10
+          puts 'Possible infinite loop in solver'
+          return eq
+        end
 
         last = eq
         eq = move_everything_to_the_left(eq)
