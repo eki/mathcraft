@@ -215,7 +215,7 @@ module Mathcraft
       constant_factors = craft(constant.coefficient.abs).factors
 
       possible_roots = constant_factors.product(lead_factors).
-        map { |a, b| [Rational(-a, b), Rational(a, b)] }.flatten
+        map { |a, b| [Rational(-a, b), Rational(a, b)] }.flatten.uniq
 
       variable = lead.variables.keys.
         find { |v| lead.variables[v] == lead.degree }

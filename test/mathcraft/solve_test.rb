@@ -54,6 +54,11 @@ class SolveTest < Minitest::Test
     assert_equal 4, solutions.length
     assert_equal [craft('x = -3'), craft('x = -2'), craft('x = 1'),
       craft('x = 4')], solutions.sort
+
+    eq = craft('(x + 1)(2x - 2) = 0')
+    solutions = eq.solve
+    assert_equal 2, solutions.length
+    assert_equal [craft('x = -1'), craft('x = 1')], solutions.sort
   end
 
   test 'solution is all real numbers' do
