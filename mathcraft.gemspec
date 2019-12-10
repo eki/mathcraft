@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Eric K Idema']
   spec.email         = ['eki@vying.org']
 
-  spec.summary       = 'Short description'
-  spec.description   = 'Description'
+  spec.summary       = 'A mathtastic computer algebra system.'
+  spec.description   = 'A mathemagical computer algebra system.'
   spec.homepage      = 'https://github.com/eki/mathcraft'
 
   spec.files         = Dir['lib/**/*', 'bin/*', 'README.md']
