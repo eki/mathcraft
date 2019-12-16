@@ -234,6 +234,13 @@ class RatioTest < Minitest::Test
     assert_equal craft!('x / y^2'), a / b
   end
 
+  test 'dividing by ratio can cancel unknowns resulting in term' do
+    a = Ratio.new('x', 'y')
+    b = Ratio.new('2x', '3y')
+
+    assert_equal craft!('3/2'), a / b
+  end
+
   test '** by 0' do
     ratio = Ratio.new('x', 2)
 

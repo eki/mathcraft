@@ -271,6 +271,10 @@ class ImmediateTest < Minitest::Test
   end
 
   test 'ratio * cancels to sum' do
+    assert_term((x / (y + 3)) * (y + 3))
+  end
+
+  test 'ratio * cancels to sum' do
     assert_sum((x + n) / (x + y) * (x + y))
   end
 
@@ -297,5 +301,35 @@ class ImmediateTest < Minitest::Test
   test 'ratio / by term is ratio' do
     assert_ratio((x / y) / n)
     assert_ratio((x / y) / y)
+  end
+
+  test 'ratio / sum is ratio' do
+    assert_ratio((x / y) / (x + n))
+    assert_ratio((x / (y + 3)) / (y + 3))
+  end
+
+  test 'ratio / ratio can cancel to term' do
+    assert_term((x / y) / (x / y))
+    assert_term((2 * x / 2 * y) / (x / y))
+    assert_term((x / y) / (x * 2 / y * 3))
+  end
+
+  test 'ratio / ratio is ratio' do
+    assert_ratio((x / y) / (y / x))
+    assert_ratio((n / y) / (y / x))
+    assert_ratio((x / y) / (y / (n * x)))
+    assert_ratio((x / y) / (y / (n + x)))
+  end
+
+  test 'ratio ** term is ratio' do
+    assert_ratio((x / y)**2)
+    assert_ratio((x / y)**n)
+    assert_ratio((n / y)**x)
+    assert_ratio((n / y)**1)
+  end
+
+  test 'ratio ** 0 is term' do
+    assert_term((x / y)**0)
+    assert_term((n / y)**0)
   end
 end
