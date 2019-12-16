@@ -83,8 +83,13 @@ module Mathcraft
       return undefined if other.undefined?
       return Term.one if other.term? && other.zero?
       return self if other.term? && other.one?
-      return Ratio.new(numerator**other, denominator**other) if other.term?
+      return numerator**other / denominator**other if other.term?
 
+      # TODO Ratio to power of Ratio. Potentially tricky because involves
+      # square roots.
+
+      # TODO Ratio to power of Sum. This should be easy because we just take
+      # numerator**sum / denominator**sum  ?
       nil
     end
 
