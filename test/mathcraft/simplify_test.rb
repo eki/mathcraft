@@ -224,6 +224,14 @@ class SimplifyTest < Minitest::Test
     assert_simplified 'x^3', 'x^2 * x'
     assert_simplified 'x^3', 'x * x^2'
     assert_simplified 'x^5', 'x^2 * x^3'
+    assert_simplified '3^(2y)', '3^y * 3^y'
+    assert_simplified 'x^(5y + 3)', 'x^(2y + 3) * x^(3y)'
+  end
+
+  test 'multiply exponents' do
+    assert_simplified 'x^6', '(x^2)^3'
+    assert_simplified 'x^8', 'x^(2^3)'
+    assert_simplified 'x^(2y^2 + 5y -3)', '(x^(y + 3))^(2y - 1)'
   end
 
   test 'simplify relies on sorting and grouping of like terms' do
