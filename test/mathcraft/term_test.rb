@@ -431,6 +431,27 @@ class TermTest < Minitest::Test
     assert_equal ratio, a**b
   end
 
+  test '** by sum' do
+    # Simple
+    term = Term.new(1, craft('z') => 1)
+    sum = Sum.new('y', 3)
+
+    assert_equal Term.new(1, craft('z') => sum), term**sum
+
+    # Need to multiply the exponent 2 * (y + 3)
+    term = Term.new(1, craft('z') => 2)
+    sum = Sum.new('y', 3)
+
+    assert_equal Term.new(1, craft('z') => sum * 2), term**sum
+
+    # Our coefficent becomes a part of variables as 3^(y + 3) and 1 is new
+    # coefficient.
+    term = Term.new(3, craft('z') => 2)
+    sum = Sum.new('y', 3)
+
+    assert_equal Term.new(1, craft('z') => sum * 2, craft(3) => sum), term**sum
+  end
+
   test 'abs' do
     assert_equal Term.one, Term.one.abs
     assert_equal Term.zero, Term.zero.abs

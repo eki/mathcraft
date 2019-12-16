@@ -243,7 +243,7 @@ module Mathcraft
     private
 
     def negative_exponents_to_ratio(term)
-      neg_vars = term.variables.select { |k, v| v.negative? }
+      neg_vars = term.variables.select { |k, v| v.term? && v.negative? }
 
       return term if neg_vars.empty?
 
