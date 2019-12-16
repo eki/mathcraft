@@ -28,7 +28,7 @@ module Mathcraft
         return solve_poly(eq, variable) if solve_poly?(eq, variable)
 
         eq = move_everything_not_variable_to_the_right(eq, variable)
-        eq = divide_out_lowest_common_variable(eq, variable)
+        eq = divide_out_gcd(eq, variable)
         eq = undo_multiplication(eq, variable)
         eq = undo_division(eq, variable)
       end
@@ -76,24 +76,11 @@ module Mathcraft
       im.to_lazy
     end
 
-    def divide_out_lowest_common_variable(equation, variable)
+    def divide_out_gcd(equation, variable)
       im = equation.to_immediate
 
-      if im.left.sum?
-        lowest = nil
-
-        im.left.terms.values.each do |t|
-          return equation unless t.term?
-
-          exp = t.variables[variable]
-
-          return equation unless exp.rational?
-
-          lowest ||= exp
-          lowest = exp if exp.to_r < lowest.to_r
-        end
-
-        im /= Term.new(1, variable => lowest)
+      if im.left.sum? && gcd = im.left.gcd
+        im /= gcd
       end
 
       im.to_lazy

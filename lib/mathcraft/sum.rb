@@ -67,8 +67,8 @@ module Mathcraft
 
       if other.rational?
         Term.new(other.to_r, {}).reciprocal * self
-      elsif other.term?
-        # Distribute when dividing by a single term
+      elsif other.term? && divide_by?(other)
+        # We don't always distribute division
         new_terms = terms.values.map { |t| t / other }
         Sum.new(*new_terms).downgrade
       elsif polynomial? && other.sum? && other.polynomial?
@@ -103,14 +103,10 @@ module Mathcraft
         return expr
       end
 
-      Expression.new('^', self, other)
+      Term.new(1, self => other)
     end
 
     alias ^ **
-
-    def coerce(other)
-      [self, craft!(other)]
-    end
 
     def inspect
       "(sum #{terms.inspect})"
@@ -184,6 +180,14 @@ module Mathcraft
       to_term || self
     end
 
+    # Find the gcd for the terms in this sum (assuming we're a sum only of
+    # terms).
+    def gcd
+      return nil unless terms.values.all?(&:term?)
+
+      terms.values.inject { |m, t| m.gcd(t) }
+    end
+
     def polynomial?
       terms.values.all? do |term|
         term.term? && term.monomial?
@@ -238,6 +242,20 @@ module Mathcraft
     end
 
     private
+
+    # Sometimes it's useful to distribute division, sometimes it's not and
+    # results in less readable expressions. Here we decide whether to
+    # distribute division by the given term by testing each term in the sum to
+    # see if any share a > 1 gcd with the given term.
+    def divide_by?(term)
+      gcds = terms.values.map { |t| term.gcd(t) }
+
+      return nil unless gcds.all?
+
+      gcd = gcds.inject { |m, t| m.gcd(t) }
+
+      gcd && gcd != Term.one
+    end
 
     def leading_sign(object)
       return '-' if object.term? && object.negative?

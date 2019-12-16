@@ -248,6 +248,10 @@ class TermTest < Minitest::Test
     assert Term.one.immediate?
   end
 
+  test 'coerce' do
+    assert_equal Term.one, 2 - Term.one
+  end
+
   test '-@' do
     assert_equal Term.new(-3, {}), -Term.new(3, {})
     assert_equal Term.new(4, {}), -Term.new(-4, {})

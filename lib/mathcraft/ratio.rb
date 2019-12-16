@@ -11,10 +11,7 @@ module Mathcraft
     def initialize(numerator, denominator)
       @numerator, @denominator = craft!(numerator), craft!(denominator)
 
-      if @denominator.zero?
-        @numerator = undefined
-        @denominator = undefined
-      elsif @numerator.rational? && @denominator.rational?
+      if @numerator.rational? && @denominator.rational?
         r = @numerator.to_r / @denominator.to_r
         @numerator = craft!(r.numerator)
         @denominator = craft!(r.denominator)
@@ -35,9 +32,7 @@ module Mathcraft
       return undefined if other.undefined?
       return self if other.term? && other.zero?
 
-      if other.term? && denominator == Term.one
-        return Ratio.new(numerator + other, denominator).downgrade
-      elsif other.ratio? && other.denominator == denominator
+      if other.ratio? && other.denominator == denominator
         return Ratio.new(numerator + other.numerator, denominator).downgrade
       end
 
@@ -62,8 +57,7 @@ module Mathcraft
 
       other = Ratio.new(other, Term.one) unless other.ratio?
 
-      Ratio.new(numerator * other.numerator, denominator * other.denominator).
-        downgrade
+      (numerator * other.numerator) / (denominator * other.denominator)
     end
 
     def /(other)
@@ -73,7 +67,10 @@ module Mathcraft
       return undefined if other.term? && other.zero?
       return Term.one if other == self
       return self if other == Term.one
-      return self * other.reciprocal if other.term?
+
+      if other == denominator
+        return Ratio.new(numerator, denominator**2).downgrade
+      end
 
       other = Ratio.new(other, Term.one) if other.term? || other.sum?
 
@@ -92,10 +89,6 @@ module Mathcraft
     end
 
     alias ^ **
-
-    def coerce(other)
-      [self, craft!(other)]
-    end
 
     def inspect
       "(ratio #{numerator.inspect} over #{denominator.inspect})"

@@ -226,6 +226,7 @@ class SumTest < Minitest::Test
 
   test 'coerce' do
     assert_equal Sum.new('x', 3), 3 + Sum.new('x')
+    assert_equal Sum.new('-x', 1), 3 - Sum.new('x', 2)
   end
 
   test '-@' do
@@ -369,6 +370,20 @@ class SumTest < Minitest::Test
     b = Term.new('8', {})
 
     assert_equal Sum.new('x', '(3/2)y'), a / b
+  end
+
+  test '/ by poly factor' do
+    a = Sum.new('x^2', '2x', '1')
+    b = Sum.new('x', '1')
+
+    assert_equal craft!('x + 1'), a / b
+  end
+
+  test '/ distributes when it can reduce all terms' do
+    a = Sum.new('2x^2', '2xy', '4xz')
+    b = craft!('2x')
+
+    assert_equal craft!('x + y + 2z'), a / b
   end
 
   test '** by 0' do

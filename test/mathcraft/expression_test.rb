@@ -79,6 +79,7 @@ class ExpressionTest < Minitest::Test
 
     assert_equal craft(3) * 4, 3 * craft(4)
     assert_equal craft(Rational(3)) * x, Rational(3) * x
+    assert_equal craft(4) / x, 4 / x
   end
 
   test '<=> with expressions' do

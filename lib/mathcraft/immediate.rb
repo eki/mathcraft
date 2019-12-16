@@ -5,5 +5,9 @@ module Mathcraft
     def to_immediate
       self
     end
+
+    def coerce(other)
+      [craft!(other), self]
+    end
   end
 end

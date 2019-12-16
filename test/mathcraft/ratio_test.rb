@@ -12,15 +12,6 @@ class RatioTest < Minitest::Test
     assert_equal craft!(2), ratio.denominator
   end
 
-  test 'new reduces' do
-    skip('Would this happen in Sum#/ ?')
-
-    ratio = Ratio.new('x^2 + 2x + 1', 'x + 1')
-
-    assert_equal craft!('x + 1'), ratio.numerator
-    assert_equal craft!(1), ratio.denominator
-  end
-
   test 'to_s' do
     assert_equal 'x / 2', Ratio.new('x', 2).to_s
     assert_equal '1 / y', Ratio.new(1, 'y').to_s
@@ -197,6 +188,11 @@ class RatioTest < Minitest::Test
 
   test '* cancels numerator' do
     assert_equal craft!('2x'), Ratio.new('2x', 'y + 3') * Sum.new('y', 3)
+    assert_equal Ratio.new(1, 'y'), Ratio.new('x', 'y') * Ratio.new(1, 'x')
+  end
+
+  test '/ cancels numerator' do
+    assert_equal Ratio.new(1, 'y'), Ratio.new('x', 'y') / craft!('x')
   end
 
   test '/ by zero' do
@@ -229,6 +225,13 @@ class RatioTest < Minitest::Test
     b = Ratio.new('y', 'x')
 
     assert_equal Ratio.new('x^2 + 2x', '2y'), a / b
+  end
+
+  test '/ by term in denominator squares denominator' do
+    a = Ratio.new('x', 'y')
+    b = Term.new('1', craft('y') => 1)
+
+    assert_equal craft!('x / y^2'), a / b
   end
 
   test '** by 0' do
@@ -264,5 +267,6 @@ class RatioTest < Minitest::Test
 
   test 'coerce' do
     assert_equal Sum.new(4, Ratio.new('x', 3)), 4 + Ratio.new('x', 3)
+    assert_equal Ratio.new(12, 'x'), 4 / Ratio.new('x', 3)
   end
 end

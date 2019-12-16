@@ -59,6 +59,12 @@ class SolveTest < Minitest::Test
     solutions = eq.solve
     assert_equal 2, solutions.length
     assert_equal [craft('x = -1'), craft('x = 1')], solutions.sort
+
+    # Fractional coefficients on a polynomial
+    eq = craft('(3/79)x^2 + (30/79)x + 63/79 = 0')
+    solutions = eq.solve
+    assert_equal 2, solutions.length
+    assert_equal [craft('x = -7'), craft('x = -3')], solutions.sort
   end
 
   test 'solution is all real numbers' do

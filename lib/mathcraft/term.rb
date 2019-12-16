@@ -80,7 +80,7 @@ module Mathcraft
       return Term.one if self == other
       return Term.zero if self == Term.zero
       return self if other == Term.one
-
+      return Ratio.new(self, Term.one) / other if other.ratio?
       return Ratio.new(self, other) unless other.term?
 
       negative_exponents_to_ratio(self * other.reciprocal)
@@ -108,10 +108,6 @@ module Mathcraft
     end
 
     alias ^ **
-
-    def coerce(other)
-      [self, craft!(other)]
-    end
 
     def inspect
       "(term #{coefficient} #{variables.inspect})"
@@ -204,6 +200,27 @@ module Mathcraft
 
     def lead
       self if monomial?
+    end
+
+    # Possibly the wrong "name"
+    def gcd(other)
+      return nil unless other.term? # ?
+
+      c1 = coefficient.numerator if coefficient.denominator == 1
+      c2 = other.coefficient.numerator if other.coefficient.denominator == 1
+
+      if c1 && c2
+        g = c1.gcd(c2)
+      else
+        g = [coefficient.abs, other.coefficient.abs].min
+      end
+
+      cv = {}
+      variables.each do |v, exp|
+        cv[v] = [exp.to_r, other.variables[v].to_r].min if other.variables[v]
+      end
+
+      Term.new(g, cv)
     end
 
     # Not the right term?
