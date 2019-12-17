@@ -268,9 +268,6 @@ class ImmediateTest < Minitest::Test
   test 'ratio * cancels to term' do
     assert_term((x / y) * y)
     assert_term((x / n) * n)
-  end
-
-  test 'ratio * cancels to sum' do
     assert_term((x / (y + 3)) * (y + 3))
   end
 
