@@ -5,9 +5,11 @@ $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 require 'bundler'
 Bundler.setup
 
-require 'simplecov'
-SimpleCov.start do
-  add_filter '/test/'
+if ENV['COVERAGE']
+  require 'simplecov'
+  SimpleCov.start do
+    add_filter '/test/'
+  end
 end
 
 require 'mathcraft'
