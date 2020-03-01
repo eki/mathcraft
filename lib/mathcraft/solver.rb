@@ -68,7 +68,7 @@ module Mathcraft
       im = equation.to_immediate
 
       if im.left.sum?
-        im.left.terms.values.each do |t|
+        im.left.terms.each_value do |t|
           im += -t unless t.to_lazy.atoms.include?(variable)
         end
       end

@@ -95,7 +95,7 @@ module Mathcraft
       return Term.zero if self == Term.zero
       return Term.one if self == Term.one
 
-      new_vars = variables.map { |k, v| [k, v * other] }.to_h
+      new_vars = variables.transform_values { |v| v * other }
       new_coeff = 1r if coefficient == 1
       new_coeff = 0r if coefficient == 0
       new_coeff = coefficient**other.to_r if other.rational?
@@ -226,7 +226,7 @@ module Mathcraft
     # Not the right term?
     def reciprocal
       coeff = Rational(coefficient.denominator, coefficient.numerator)
-      vars = variables.map { |k, v| [k, -v] }.to_h
+      vars = variables.transform_values(&:-@)
       Term.new(coeff, vars)
     end
 
