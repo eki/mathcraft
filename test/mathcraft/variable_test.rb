@@ -40,11 +40,9 @@ class VariableTest < Minitest::Test
   end
 
   test '<=>' do
-    # rubocop:disable Lint/UselessComparison
     assert_equal 0, Variable.new('x') <=> Variable.new('x')
     assert_equal(-1, Variable.new('x') <=> Variable.new('y'))
     assert_equal 1, Variable.new('x') <=> Variable.new('v')
-    # rubocop:enable Lint/UselessComparison
   end
 
   test 'sort' do

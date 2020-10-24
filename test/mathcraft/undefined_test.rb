@@ -40,9 +40,7 @@ class UndefinedTest < Minitest::Test
   end
 
   test '<=>' do
-    # rubocop:disable Lint/UselessComparison
     assert_equal 0, undefined <=> undefined
-    # rubocop:enable Lint/UselessComparison
   end
 
   test 'type' do

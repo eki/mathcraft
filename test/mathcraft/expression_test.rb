@@ -83,7 +83,6 @@ class ExpressionTest < Minitest::Test
   end
 
   test '<=> with expressions' do
-    # rubocop:disable Lint/UselessComparison
     assert_equal 0, craft('3 + 4') <=> craft('3 + 4')
     assert_equal 0, craft('x * y') <=> craft('x * y')
 
@@ -93,7 +92,6 @@ class ExpressionTest < Minitest::Test
     assert_equal(-1, craft('x * y') <=> craft('y * x'))
     assert_equal 1, craft('4 + 3') <=> craft('3 + 4')
     assert_equal 1, craft('z * y') <=> craft('y * z')
-    # rubocop:enable Lint/UselessComparison
   end
 
   test 'is a tree' do

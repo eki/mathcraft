@@ -93,7 +93,7 @@ module Mathcraft
     end
 
     def check_atom
-      scanner.check(/\s*[a-zA-Z\d\(]/)
+      scanner.check(/\s*[a-zA-Z\d(]/)
     end
 
     def implicit_operator

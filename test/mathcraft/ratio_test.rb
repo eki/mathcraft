@@ -58,12 +58,10 @@ class RatioTest < Minitest::Test
   end
 
   test '<=>' do
-    # rubocop:disable Lint/UselessComparison
     assert_equal 0, Ratio.new('x', 2) <=> Ratio.new('x', 2)
 
     assert_equal 1, Ratio.new('y', 2) <=> Ratio.new('x', 2)
     assert_equal(-1, Ratio.new('x', 2) <=> Ratio.new('y', 2))
-    # rubocop:enable Lint/UselessComparison
   end
 
   test 'sort' do

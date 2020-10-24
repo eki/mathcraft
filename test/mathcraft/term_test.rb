@@ -107,7 +107,6 @@ class TermTest < Minitest::Test
   end
 
   test '<=>' do
-    # rubocop:disable Lint/UselessComparison
     assert_equal 0, Term.zero <=> Term.zero
     assert_equal 0,
       Term.new(3, craft('x') => 2) <=> Term.new(3, craft('x') => 2)
@@ -140,7 +139,6 @@ class TermTest < Minitest::Test
 
     assert_equal(-1, Term.new(1, craft('x') => 1) <=>
       Term.new(1, craft('y') => 1))
-    # rubocop:enable Lint/UselessComparison
   end
 
   test 'sort' do

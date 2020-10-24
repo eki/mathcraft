@@ -116,7 +116,6 @@ class SumTest < Minitest::Test
   end
 
   test '<=>' do
-    # rubocop:disable Lint/UselessComparison
     assert_equal 0, Sum.new <=> Sum.new
     assert_equal 0, Sum.new(3) <=> Sum.new(3)
     assert_equal 0, Sum.new('x') <=> Sum.new('x')
@@ -146,7 +145,6 @@ class SumTest < Minitest::Test
     assert_equal(-1, Sum.new('x^2') <=> Sum.new('x'))
     assert_equal(-1, Sum.new('x^2/y') <=> Sum.new('x/y'))
     assert_equal(-1, Sum.new('x/y') <=> Sum.new('x/z'))
-    # rubocop:enable Lint/UselessComparison
   end
 
   test 'sort' do

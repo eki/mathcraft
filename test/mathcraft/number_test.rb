@@ -42,11 +42,9 @@ class NumberTest < Minitest::Test
   end
 
   test '<=>' do
-    # rubocop:disable Lint/UselessComparison
     assert_equal 0, Number.new(3) <=> Number.new(3)
     assert_equal(-1, Number.new(2) <=> Number.new(3))
     assert_equal 1, Number.new(3) <=> Number.new(2)
-    # rubocop:enable Lint/UselessComparison
   end
 
   test 'sort' do

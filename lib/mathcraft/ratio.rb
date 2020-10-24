@@ -113,7 +113,6 @@ module Mathcraft
 
     def <=>(other)
       other = craft!(other)
-      other = other if other.ratio?
       other = Ratio.new(other, Term.one) if other.sum? || other.term?
 
       return nil unless other.ratio?

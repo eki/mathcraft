@@ -61,13 +61,11 @@ class EquationTest < Minitest::Test
   end
 
   test '<=>' do
-    # rubocop:disable Lint/UselessComparison
     assert_equal 0, craft('x = 3') <=> craft('x = 3')
     assert_equal 1, craft('x = 4') <=> craft('x = 3')
     assert_equal(-1, craft('x = 3') <=> craft('x = 4'))
     assert_equal 1, craft('y = 3') <=> craft('x = 3')
     assert_equal(-1, craft('x = 3') <=> craft('y = 3'))
-    # rubocop:enable Lint/UselessComparison
   end
 
   test 'eql?' do

@@ -71,7 +71,7 @@ module Mathcraft
     UNDEFINED = new
 
     class << self
-      private :new # rubocop:disable Style/AccessModifierDeclarations
+      private :new
     end
   end
 end
