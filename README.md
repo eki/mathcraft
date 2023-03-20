@@ -18,10 +18,18 @@ completeness. A couple examples:
 
 There are likely many remaining equations that it is incapable of solving.
 
+## Repo Recently Made Public
+
+Until recently, this repo was private and still has some development
+dependencies that are private. If time allows, I'll either replace the private
+dependencies or make them public as well. My motivation for making this project
+public is that I have occasionally wanted to show the code to some folks
+because there are some bits that I think are kind of interesting. YMMV
+
 ## Installation
 
-This gem is private currently, so you'll need to add this line to your
-application's Gemfile:
+*If you are the author*, this gem is hosted privately on s3 and you can add
+this to your application's Gemfile:
 
 ```ruby
 source 's3://vying-gems', type: 'aws-s3' do
@@ -29,11 +37,18 @@ source 's3://vying-gems', type: 'aws-s3' do
 end
 ```
 
+Others, can probably reference this repo directly like so:
+
+```ruby
+gem "mathcraft", :git => "git://github.com/eki/mathcraft.git"
+```
+
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
+Or install it yourself as (this will not work for everyone, yet, because this
+gem hasn't been published to rubygems):
 
     $ gem install mathcraft
 
@@ -185,3 +200,91 @@ operations accumulated in lazy fashion. Finally we call `simplify` and we've
 On a side note: can you guess how `simplify` is implemented? If you guessed
 that we only need to translate from lazy to immediate and back, you're right!
 Simplify is just `to_immediate.to_lazy`.
+
+## Development
+
+This gem was private until recently and uses the same private tools that the
+rest of my side projects use (for consistency across projects and to save
+myself time).
+
+Tests currently require my private gem `minitest-boost` which allows test to be
+written in a Rails style with a block and a string name instead of the normal
+minitest style. This is a development dependency and would not impact using
+mathcraft in another project.
+
+```ruby
+# Tests are written in more of a Rails style, like this:
+test 'parse numbers' do
+  # ...
+end
+
+# As opposed to how it'd normally be written with minitest on its own:
+def test_parse_numbers
+  # ...
+end
+```
+
+Tests, lint, and security tools are run via another private gem called `proj`
+which simply ensures all my private projects have the same development
+interface. Here, for example, is what the current out put of `proj check` looks
+like on `mathcraft`:
+
+```
+eki@vorpal> proj check                                     ~/projects/mathcraft
+Running tests
+
+Run with: proj test -s 19791
+
+.......................................................................................................................................................................................................................................................................................................................................................................................................
+
+Loaded in 0.230s. Ran in 0.337543s, 1158.37 runs/s, 3430.67 assertions/s.
+391 runs, 1158 assertions, 0 failures, 0 errors, 0 skips
+Coverage report generated for MiniTest to
+/Users/eki/projects/mathcraft/coverage. 797 / 803 LOC (99.25%) covered.
+
+
+Running rubocop -c .../proj-0.23.8/rubocop.yml
+
+Inspecting 33 files
+.................................
+
+33 files inspected, no offenses detected
+
+Running bundle-audit check --update
+
+Updating ruby-advisory-db ...
+From https://github.com/rubysec/ruby-advisory-db
+ * branch            master     -> FETCH_HEAD
+Already up to date.
+Updated ruby-advisory-db
+ruby-advisory-db:
+  advisories:   689 advisories
+  last updated: 2023-03-17 16:41:49 -0700
+  commit:       d15c57b99d90f5db77f9a42978aec3f086f4add5
+No vulnerabilities found
+
+All checks passed
+```
+
+And, here are some stats for this `mathcraft` as of this update to the README
+(this uses `tokei` to collect the actual lines-of-code stats):
+
+```
+eki@vorpal> proj stat                                      ~/projects/mathcraft
+
+| code                 | lang       |  files |    lines |     code | comments |
+| -------------------- | ---------- | ------ | -------- | -------- | -------- |
+| lib                  | Ruby       |     16 |     1561 |     1130 |       64 |
+| test                 | Ruby       |     13 |     2823 |     2176 |       42 |
+| test:support         | Ruby       |      2 |       42 |       28 |        4 |
+| -------------------- | ---------- | ------ | -------- | -------- | -------- |
+| total                | Ruby       |     31 |     4426 |     3334 |      110 |
+| -------------------- | ---------- | ------ | -------- | -------- | -------- |
+Code: 1130  Test: 2204  Ratio 1:1.95
+```
+
+Until `minitest-boost` and `proj` are either made public or replaced, it'll be
+hard for outside developers to contribute to this project. If you are
+interested in working on this project, please let me know. I'm not sure how
+interested I am in making these changes if this is going to continue to be a
+toy project in which I'm the only developer.
